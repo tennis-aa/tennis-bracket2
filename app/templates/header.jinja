@@ -1,0 +1,28 @@
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{{ url_for('index') }}" style="font-size:24px">Duelo de Cuadros</a>
+    </div>
+    <ul class="nav navbar-nav">
+      {% if g.user %}
+      <li><a href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></li>
+      <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+      {% else %}
+      <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+{# <nav  class="navbar navbar-default border-primary">
+  <ul  class = "nav navbar-nav">
+    <li><h1><a href="{{ url_for('index') }}">Cuadromania</a></h1></li>
+    {% if g.user %}
+    <li> {{ g.user['username'] }} </li>
+    <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+    {% else %}
+    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+    <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+    {% endif %}
+  </ul>
+</nav> #}

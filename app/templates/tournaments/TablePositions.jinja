@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> {{ tournament }} </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+  {# <script type="application/javascript">
+    let table_results = {{ table_results }}
+  </script>
+  <script src=" {{ url_for('static',filename='js/tablePositions.js') }}"></script> #}
+</head>
+<body onLoad="loadTable()">
+<div class="container">
+  {% include 'header.jinja' %}
+  <h2> {{ tournament }} {{ year}} </h2>
+  <nav class="navbar navbar-default border-primary">
+    <ul class = "nav navbar-nav">
+      <li><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></li>
+      <li class="active"><a href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></li>
+      <li><a href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></li>
+    </ul>
+  </nav>
+  <div id="table-container">
+    <table id="table-positions">
+      <tr>
+        <th style="width: 1.5cm"> Pos. </th>
+        <th style="width: 2cm"> Usuario </th>
+        <th style="width: 2cm"> Puntos </th>
+        <th style="width: 2cm"> Potencial </th>
+        <th style="width: 4cm"> Entre usuarios </th>
+        <th style="width: 4cm"> Entre micos </th>
+        <th style="width: 4cm"> Entre robots </th>
+        <th style="width: 4cm"> Probabilidad de ganar </th>
+      </tr>
+    {% for i in range(table_results['user']|length) %}
+      <tr>
+        <td> {{ i+1 }} </td>
+        <td><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}?user={{ table_results['user'][i] }}"> {{ table_results['user'][i] }} </a></td>
+        <td> {{ table_results['points'][i] }} </td>
+        <td> {{ table_results['potential'][i] }} </td>
+        <td> {{ table_results['rank'][i] }} </td>
+        <td> {{ table_results['monkey_rank'][i] }}% &plusmn1% </td>
+        <td> {{ table_results['bot_rank'][i] }}% &plusmn1% </td>
+        <td> {{ (table_results['prob_winning'][i]*100)|round }}% &plusmn1% </td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>
+</body>
+</html>

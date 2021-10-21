@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Cuadros </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+<div class=container>
+  <div class="container">
+    {% include 'header.jinja' %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
+    
+    {% for year in year_tournament_dict %}
+    <h2> {{ year }} </h2>
+    <ul>
+      {% for tournament in year_tournament_dict[year] %}
+        <li><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> {{ tournament }}</a></li>
+      {% endfor %}
+    {% endfor %}
+      {# <li><a href="{{ url_for('tournaments.bracket',year=2021,tournament='Barcelona') }}"> Barcelona </a></li>
+      <li><a href="{{ url_for('tournaments.bracket',year=2021,tournament='US Open') }}"> US Open </a></li> #}
+    </ul>
+  </div>
+</div>
+</body>
+</html>

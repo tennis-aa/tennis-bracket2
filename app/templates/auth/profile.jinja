@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> {{ tournament }}  {{ year }} </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static',filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <div class="container">
+    {% include 'header.jinja' %}
+    <div>
+      Usuario: {{ g.user['username'] }} <button> editar </button>
+      <form method="post" name="user_change" style="visibility:hidden">
+        <label for="username"> Nuevo nombre de usuario </label>
+        <input name="username" id="username" required>
+        <input type="submit" value="Enviar">
+      </form>
+    </div>
+    <div>
+      <button> cambiar contraseña </button>
+      <form method="post" name="password_change" style="visibility:hidden">
+        <label for="password"> Nueva contraseña </label>
+        <input name="password" id="password" required>
+        <input type="submit" value="Enviar">
+      </form>
+    </div>
+  </div>
+</body>
+</html>

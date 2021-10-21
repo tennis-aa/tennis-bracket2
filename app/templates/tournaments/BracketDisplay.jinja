@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> {{ tournament }} {{ year }} </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+  <style>
+    .player {
+      font-size: {{ cellheight*0.6 }}px;
+      font-family: Arial, Helvetica, sans-serif;
+      width: {{ hspace }}px;
+      height: {{ cellheight }}px;
+      text-align: left;
+      padding-left: {{ hspace*0.03 }}px;
+      border-bottom: {{ linewidth }}px solid black;
+      border-radius: 0px;
+      background-color: transparent;
+      overflow: visible;
+    }
+    .score {
+      font-size: {{ cellheight*0.6 }}px;
+      font-family: Arial, Helvetica, sans-serif;
+      width: {{ hspace }}px;
+      height: {{ cellheight }}px;
+      text-align: left;
+      padding-left: {{ hspace*0.03 }}px;
+      background-color: transparent;
+      overflow: visible;
+    }
+    .line {
+      border-left: {{ linewidth }}px solid black; 
+    }
+  </style>
+  <script type=application/javascript>
+    let bracketSize = {{ bracketSize }};
+    let players = {{ players }}
+    let brackets = {{ brackets }}
+    let results_dict = {{ results_dict }}
+  </script>
+  <script type=application/javascript src="{{ url_for('static', filename='js/displayBracket.js') }}"></script>
+
+</head>
+<body onLoad="loadDisplay()">
+<div class="container">
+  {% include 'header.jinja' %}
+  <h2> {{ tournament }} {{ year}} </h2>
+  <nav class="navbar navbar-default border-primary">
+    <ul class = "nav navbar-nav">
+      <li class="active"><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></li>
+      <li><a href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></li>
+      <li><a href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></li>
+    </ul>
+  </nav>
+  <div class="bracket_container" style="position:relative;height:{{bracketSize/2*vspace}}px;width:{{ (rounds+1)*2*hspace }}px;">
+  {% for j in range(rounds) %}
+    {% for i in range((bracketSize/(2**j)) | int) %}
+      {%- if i < bracketSize/(2**(j+1)) %}
+        {%- if i%2 == 0 and j<rounds-1 %}{# draw the lines between players in a match #}
+    <div class="line" style="position: absolute; left:{{ (j+1)*hspace }}px;top:{{ i*vspace*(2**j) + vspace*(2**(j-1) - 1/2) + cellheight - linewidth }}px;height: {{ vspace*(2**j) + linewidth }}px"> </div>
+        {% endif %}
+    <div class="player" id="p{{ counter[j] + i }}" style="position: absolute;left:{{ j*hspace }}px;top:{{ i*vspace*(2**j) + vspace*(2**(j-1) - 1/2) }}px"> </div>
+        {% if j>0 %}
+    <div class="score" id="score{{ counter[j] + i }}" style="position: absolute;left:{{ j*hspace }}px;top:{{ i*vspace*(2**j) + vspace*(2**(j-1) - 1/2) + cellheight }}px"> </div>
+        {% endif%}
+      {% else %}
+        {% if i%2 == 0 and j<rounds-1 %}{# draw the lines between players in a match #}
+    <div class="line" style="position: absolute; left:{{ hspace * (2*rounds - j) }}px;top:{{ (i-bracketSize/(2**(j+1)))*vspace*(2**j) + vspace*(2**(j-1) - 1/2) + cellheight - linewidth }}px;height: {{ vspace*(2**j) + linewidth }}px"> </div>
+        {% endif %}
+    <div class="player" id="p{{ counter[j] + i }}" style="position: absolute;left:{{ hspace * (2*rounds - j) }}px;top:{{ (i-bracketSize/(2**(j+1)))*vspace*(2**j)  + vspace*(2**(j-1) - 1/2) }}px"> </div>
+        {% if j>0 %}
+    <div class="score" id="score{{ counter[j] + i }}" style="position: absolute;left:{{ hspace * (2*rounds - j) }}px;top:{{ (i-bracketSize/(2**(j+1)))*vspace*(2**j)  + vspace*(2**(j-1) - 1/2) + cellheight }}px"> </div>
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+    <div class="line" style="position: absolute; left:{{ rounds*hspace }}px;top: {{ vspace*(2**(rounds-2) - 2) + cellheight - linewidth }}px;height: {{ 1.5*vspace+linewidth }}px"> </div>
+    <div class="line" style="position: absolute; left:{{ (rounds+1)*hspace }}px;top:{{ vspace*(2**(rounds-2) - 2) + cellheight - linewidth }}px;height: {{ 1.5*vspace+linewidth }}px"> </div>
+    <div class="player" id="p{{ counter[rounds] }}" style="position: absolute;left:{{ (rounds)*hspace }}px;top:{{ vspace*(2**(rounds-2) - 2) }}px;text-align: center"> </div>
+    <div class="score" id="score{{ counter[rounds] }}" style="position: absolute;left:{{ (rounds)*hspace }}px;top:{{ vspace*(2**(rounds-2) - 2) + cellheight }}px;text-align: center"> </div>
+    
+    <div id="userinfo-container" style="position: absolute; left: {{ (rounds-1)*hspace }}px; top: {{ vspace }}px;width: {{ 3*hspace }}px; height: {{ vspace }}px; text-align: center"> 
+      <label for="user"> Usuario </label>
+      <select id="user" name="user" onchange="display_bracket()">
+        <option></option>
+      </select>
+      <div id="user-info"> </div>
+    </div>
+  </div>
+</body>
+</html>
+
+

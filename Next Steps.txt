@@ -1,0 +1,12 @@
+- elo perform much better than the median robot. Why? Can we adapt the strategy of the robot?
+- create the functions to load and save the brackets from the database (instead of a method of pybracket, this could a function in the app)
+	- create a mechanism to update the results
+- create a data base with players with more than one first name to scrape for atpwebsite
+	- create database of names that are not exact matches in atp vs elo websites for scraping elos
+- find a way to update results through an admin interface and to schedule updates
+- instead of a registration page have a username and password change page
+- restrict submission to before start time of the tournament
+- interface to do eloscrape from the user side
+- can selenium look for geckodriver on the folder (the geckodriver must match the os of the server)
+	- there is a way to install chromium on the heroku app, maybe also gecko driver
+- use utr as an alternative to elo?
