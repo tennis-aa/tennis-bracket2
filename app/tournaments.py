@@ -22,7 +22,6 @@ def index():
 @bp.route('/<year>/<tournament>')
 @auth.login_required
 def bracket(year,tournament):
-    
     tourn = models.Tournament.query.filter((models.Tournament.name == tournament) & (models.Tournament.year == year)).first()
     if tourn is None:
         flash('could not find tournament')
@@ -80,14 +79,12 @@ def submit(year,tournament):
 @bp.route('/<year>/<tournament>/table')
 @auth.login_required
 def table(year,tournament):
-
     tourn = models.Tournament.query.filter((models.Tournament.name == tournament) & (models.Tournament.year == year)).first()
 
     users = models.User.query.filter(models.User.user_id.in_(tourn.results['table_results']['user'])).all()
     users = {i.user_id:i.username for i in users}
 
     tourn.results['table_results']['user'] = [users[i] for i in tourn.results['table_results']['user']]
-    print(tourn.results['table_results'])
     render_vars = {'bracketSize':tourn.bracketsize,'table_results':tourn.results['table_results']}
     return bracketRender('table',year,tournament,render_vars)
 
@@ -95,7 +92,6 @@ def table(year,tournament):
 
 import math
 def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=32,hspace=100,linewidth=1):
-
     bracketSize = render_vars['bracketSize']
     rounds = math.log(bracketSize,2)
     if not rounds.is_integer():
@@ -106,7 +102,6 @@ def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=3
     counter = [0]*(rounds+1)
     for j in range(rounds):
         counter[j+1] = counter[j] + int(bracketSize/(2**j))
-    # print(counter)
 
     render_vars.update({"rounds" : rounds, "counter" : counter, "year" : year, "tournament": tournament,
     "cellheight": cellheight, "vspace": vspace, "hspace": hspace, "linewidth": linewidth})

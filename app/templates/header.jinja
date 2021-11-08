@@ -1,14 +1,17 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="{{ url_for('index') }}" style="font-size:24px">Duelo de Cuadros</a>
+      <a class="navbar-brand" href="{{ url_for('index') }}" style="font-size:24px">El Cuadrin</a>
     </div>
     <ul class="nav navbar-nav">
       {% if g.user %}
       <li><a href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></li>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+        {% if g.user.user_id < 4 %}
+      <li><a href="{{ url_for('update.index') }}">Administrar</a></li>
+        {% endif %}
+      <li><a href="{{ url_for('auth.logout') }}">Cerrar sesion</a></li>
       {% else %}
-      <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+      <li><a href="{{ url_for('auth.login') }}">Iniciar sesion</a></li>
       {% endif %}
     </ul>
   </div>

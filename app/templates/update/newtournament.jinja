@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> New Tournament </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <div class="container">
+    {% include 'header.jinja' %}
+    <h2> Torneo nuevo </h2>
+    <form method="post">
+      <label for="name"> Nombre del torneo: </label>
+      <input type="text" name="name" id="name">
+      <label for="year"> Año: </label>
+      <input type="number" name="year" id="year" value="2021">
+      <label for="sets"> Mejor de cuantos sets? </label>
+      <input type="number" name="sets" id="sets" value="3">
+      <label for="atplink"> Enlace a la pagina de la ATP: </label>
+      <input type="text" name="atplink" id="atplink">
+      <label for="surface"> Superficie: </label>
+      <select name="surface" id="surface">
+        <option value="all"> N/A </option>
+        <option value="hard"> Dura </option>
+        <option value="clay"> Polvo de ladrillo </option>
+        <option value="grass"> Cesped </option> 
+      </select>
+      <input type="text" name="atplink" id="atplink">
+      <label for="starttime"> Hora de inicio </label>
+      <input type="datetime-local" name="starttime" id="starttime">
+      <label for="endtime"> Hora de finalizacion </label>
+      <input type="datetime-local" name="endtime" id="endtime">
+      <input type="submit" value="Crear">
+    </form>
+  </div>
+</body>
+</html>

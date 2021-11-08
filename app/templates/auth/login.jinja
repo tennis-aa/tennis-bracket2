@@ -9,6 +9,9 @@
 <body>
   <div class="container">
   {% include 'header.jinja' %}
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
   <form method="post">
     <label for="username">Username</label>
     <input name="username" id="username" required>

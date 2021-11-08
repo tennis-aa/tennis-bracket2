@@ -9,20 +9,24 @@
 <body>
   <div class="container">
     {% include 'header.jinja' %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
     <div>
-      Usuario: {{ g.user['username'] }} <button> editar </button>
-      <form method="post" name="user_change" style="visibility:hidden">
+      <form method="post" onsubmit="return confirm('Esta seguro que quiere cambiar su nombre de usuario?');">
         <label for="username"> Nuevo nombre de usuario </label>
         <input name="username" id="username" required>
-        <input type="submit" value="Enviar">
+        <input type="submit" name="btn" value="Cambiar nombre de usuario">
       </form>
     </div>
     <div>
-      <button> cambiar contraseña </button>
-      <form method="post" name="password_change" style="visibility:hidden">
+      <form method="post" name="password_change" onsubmit="return confirm('Esta seguro que quiere cambiar la contraseña?');">
         <label for="password"> Nueva contraseña </label>
-        <input name="password" id="password" required>
-        <input type="submit" value="Enviar">
+        <input type="password" name="password" id="password" required>
+        <br>
+        <label for="password2"> Reingrese la contraseña </label>
+        <input type="password" name="password2" id="password2" required>
+        <input type="submit" name="btn" value="Cambiar contraseña">
       </form>
     </div>
   </div>

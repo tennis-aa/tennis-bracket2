@@ -6,9 +6,12 @@ from random import random
 from . import playerScrape 
 from . import eloScrape
 from . import basicBrackets
+from datetime import datetime
 
 class Bracket:
-    def __init__(self,players=[],elo=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},brackets={},tournament="",path="",points_per_round=[1,2,3,5,7,10,15],atplink="",surface="all"):
+    def __init__(self,players=[],elo=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},
+                brackets={},tournament="",year=0,path="",points_per_round=[1,2,3,5,7,10,15],atplink="",surface="all",
+                start_time=datetime(2021,1,1,0,0,0,0),end_time=datetime(2021,1,1,0,0,0,0)):
         self.players = players
         self.bracketSize = len(players)
         self.elo = elo
@@ -23,6 +26,7 @@ class Bracket:
             self.rounds = int(math.log2(self.bracketSize))
         self.brackets = brackets
         self.tournament = tournament
+        self.year = year
         self.path = path
         self.points_per_round = points_per_round
         self.atplink = atplink
@@ -30,6 +34,8 @@ class Bracket:
         self.counter = [0]*(self.rounds+1)
         for j in range(self.rounds):
             self.counter[j+1] = self.counter[j] + int(self.bracketSize/(2**j))
+        self.start_time = start_time
+        self.end_time = end_time
     
     def loadFromFolder(self,path=None):
         if path is not None:

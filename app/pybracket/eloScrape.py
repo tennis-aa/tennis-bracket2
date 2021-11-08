@@ -4,6 +4,7 @@ import os
 import json
 import re
 from statistics import mean, quantiles
+from .bracket2elo import exceptions
 
 def eloScrape(players,surface):
     # scrape elos from the tennisabstract website
@@ -52,24 +53,36 @@ def eloScrape(players,surface):
         if p_draw == "Bye":
             elos[i] = 0
             continue
-        if p_draw.startswith("Qualifier"):
+        elif p_draw.startswith("Qualifier"):
             elos[i] = 1
             continue
-        matches = []
+        matches = 0
         Player_indices = []
-        for j,p_elo in enumerate(Player):
-            x = re.search(p_draw.split()[1],p_elo) # the index should match the last name
-            if x:
-                matches.append(x)
-                Player_indices.append(j)
-        if len(matches) == 1:
+        if p_draw[-1]==")": # if the player entry has a seed, remove the see from the name
+            p_draw_name = " ".join(p_draw.split()[0:-1])
+        else:
+            p_draw_name = p_draw
+        if p_draw_name in exceptions.keys():
+            try:
+                ind = Player.index(exceptions[p_draw_name])
+                matches += 1
+                Player_indices.append(ind)
+            except:
+                pass
+        else:
+            for j,p_elo in enumerate(Player):
+                x = re.search(p_draw.split()[1],p_elo) # the index should match the last name
+                if x:
+                    matches += 1
+                    Player_indices.append(j)
+        if matches == 1:
             elos[i] = EloSurface[Player_indices[0]]
             elos_found.append(EloSurface[Player_indices[0]])
-        if len(matches) == 0:
+        elif matches == 0:
             conflicts.append(p_draw)
             conflicts_indices.append(i)
             print("Could not find elo for",p_draw)
-        if len(matches) > 1:
+        elif matches > 1:
             conflicts.append(p_draw)
             conflicts_indices.append(i)
             print("Found more than one match for",p_draw)
@@ -81,16 +94,14 @@ def eloScrape(players,surface):
         if elos[i] == 1:
             elos[i] = quartiles[0]
     # Request input from user for other players
-    print("Elo stats: min=",min(elos_found),"; Q1=",quartiles[0],"; median=",quartiles[1],"; avg=",mean(elos_found),"; Q3=",quartiles[2],"; max=",max(elos_found))
-    manually = input("Do you want to input missing Elo ratings manually? (if not, missing elo ratings are imputed with the median) [y/n]: ")
-    for i in range(len(conflicts)):
-        if manually in ("y","yes"):
-            elo = input("Enter Elo rating for " + conflicts[i] + ": ")
-            elos[conflicts_indices[i]] = float(elo)
-        else:
-            elos[conflicts_indices[i]] = quartiles[1]
+    # if len(conflicts)>0:
+    #     print("Elo stats: min=",min(elos_found),"; Q1=",quartiles[0],"; median=",quartiles[1],"; avg=",mean(elos_found),"; Q3=",quartiles[2],"; max=",max(elos_found))
+    #     manually = input("Do you want to input missing Elo ratings manually? (if not, missing elo ratings are imputed with the median) [y/n]: ")
+    #     for i in range(len(conflicts)):
+    #         if manually in ("y","yes"):
+    #             elo = input("Enter Elo rating for " + conflicts[i] + ": ")
+    #             elos[conflicts_indices[i]] = float(elo)
+    #         else:
+    #             elos[conflicts_indices[i]] = quartiles[1]
 
     return elos
-
-if __name__=="__main__":
-    eloScrape(["N Djokovic","R Federer"])

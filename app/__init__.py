@@ -26,13 +26,17 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
 
-    # page to register and login
+    # pages to login and update profile
     from . import auth
     app.register_blueprint(auth.bp)
 
-    # index page with list of tournaments
+    # page with tournaments
     from . import tournaments
     app.register_blueprint(tournaments.bp)
     app.add_url_rule('/', endpoint='index')
+
+    # page to update tournaments
+    from . import update
+    app.register_blueprint(update.bp)
 
     return app

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Update </title>
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <div class="container">
+    {% include 'header.jinja' %}
+    <h2> Configuraciones de {{ b.tournament }} {{ b.year }} </h2>
+    <form method="post">
+      <label for="surface"> Superficie: </label>
+      <select name="surface" id="surface">
+        <option value="all"> N/A </option>
+        <option value="hard" {% if b.surface=='hard' %} selected="selected" {% endif %}> Dura </option>
+        <option value="clay" {% if b.surface=='clay' %} selected="selected" {% endif %}> Polvo de ladrillo </option>
+        <option value="grass" {% if b.surface=='grass' %} selected="selected" {% endif %}> Cesped </option> 
+      </select>
+      <label for="sets"> Numero de sets</label>
+      <select name="sets" id="sets">
+        <option value=3> 3 </option>
+        <option value=5 {% if b.sets == 5 %} selected="selected" {% endif %}> 5 </option>
+      </select>
+      <label for="atplink"> Enlace a la pagina de la ATP </label>
+      <input type="text" value="{{ b.atplink }}" name="atplink" id="atplink">
+      <table>
+        <tr>
+          {% for i in range(b.rounds)%}
+            <th> Ronda {{ i }} </th>
+          {% endfor %}
+        </tr>
+        <tr>
+          {% for i in range(b.rounds)%}
+            <td>
+              <input type="number" value="{{ b.points_per_round[i] }}" name="points_per_round{{i}}">
+            </td>
+          {% endfor %}
+        </tr>
+      </table>
+      
+      <br>
+      <p>
+        Los indices elo son extraidos de <a href="http://tennisabstract.com/reports/atp_elo_ratings.html" target="blank"> tennisabstract </a>. 
+        Los indices de los jugadores resaltados en rojo no estan en la tabla de tennisabstract o varias posibilidades fueron encontradas.
+        A estos jugadores se les asigno un indice de 1650 pero deben ser ingreasados manualmente.
+      </p>
+      <table>
+        <tr>
+          <th> Jugador </th>
+          <th> Indice Elo </th>
+        </tr>
+        {% for i in range(b.players|length) %}
+        <tr>
+          <td {% if b.elo[i] == 1650 %} style="background-color:red" {% endif %}> {{ b.players[i] }} </td>
+          <td> <input type="number" value="{{ b.elo[i] }}" name="elo{{i}}"> </td>
+        {% endfor %}
+        </tr>
+      </table>
+      <input type="submit" value="Actualizar torneo">
+    </form>
+  </div>
+</body>
+</html>

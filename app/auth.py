@@ -84,22 +84,31 @@ def login_required(view):
 @login_required
 def profile():
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        error = None
-        user = models.User.query.filter_by(username=username).first()
+        usernames = models.User.query.with_entities(models.User.username).all()
+        usernames = [u[0] for u in usernames]
+        print(usernames)
+        print(type(usernames[0]))
+        if request.form['btn'] == 'Cambiar nombre de usuario':
+            username = request.form['username']
+            if username is None:
+                error = 'Ingrese el nuevo usuario'
+            elif username in usernames:
+                error = 'El nombre de usuario ' + username + ' ya existe.'
+            else:
+                g.user.username = username
+                models.db.session.commit()
+                error = 'Su nuevo nombre de usuario es ' + username
+        if request.form['btn'] == 'Cambiar contraseña':
+            password = request.form['password']
+            password2 = request.form['password2']
+            if (password != password2) or (password is None):
+                error = 'Error: ingrese la misma contraseña.'
+            else:
+                g.user.password = generate_password_hash(password)
+                models.db.session.commit()
+                error = 'Su contraseña ha sido actualizada.'
 
-        if user is None:
-            error = 'Incorrect username.'
-        elif not check_password_hash(user.password, password):
-            error = 'Incorrect password.'
-
-        if error is None:
-            session.clear()
-            session['user_id'] = user.user_id
-            return redirect(url_for('index'))
-
-        flash(error) # allow user to change username and password
+        flash(error)
     return render_template('auth/profile.jinja')
 
 
