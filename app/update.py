@@ -1,6 +1,7 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from datetime import datetime
 from . import pybracket
 from . import models
 from . import auth
@@ -40,14 +41,17 @@ def newtournament():
     if request.method == "POST":
         atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
         elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
-        b = pybracket.Bracket(players=atpinfo['players'],elo=elos,sets=request.form['sets'],results=atpinfo['results'],
-            scores=atpinfo['scores'],tournament=request.form['name'],year=request.form['year'],
-            atplink=request.form['atplink'],surface=request.form['surface'],start_time=request.form['starttime'],
-            end_time=request.form['endtime'])
-        print(b)
-        print(type(b.start_time))
+        start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
+        bracketsize = len(atpinfo['players'])
+        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]}}
+        tourn = models.Tournament(request.form['name'],request.form['year'],start_time,end_time,[1,2,3,5,7,10,15],
+            request.form['atplink'],bracketsize,request.form['surface'],request.form['sets'],
+            atpinfo['players'],elos,results_dict)
+        models.db.session.add(tourn)
+        models.db.session.commit()
 
-        return "Work in progress" # should return the update page to input elo ratings for nonmatches
+        return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
     
     return render_template("update/newtournament.jinja")
 

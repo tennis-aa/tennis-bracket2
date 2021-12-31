@@ -138,9 +138,9 @@ class Bracket:
         if len(conflicts_old)>0:
             print("The following conflicts were found:")
             print(json.dumps({conflicts_old[i]:conflicts_new[i] for i in range(len(conflicts_old))},indent=4))
-            change = input("Do you want to update the players? [y/n]: ")
-            if change != "y" and change != "yes":
-                raise Exception("You will not be able to update results if there are conflicts between the bracket files and the ATP website.")
+            # change = input("Do you want to update the players? [y/n]: ")
+            # if change != "y" and change != "yes":
+            #     raise Exception("You will not be able to update results if there are conflicts between the bracket files and the ATP website.")
 
             # players.json
             self.players = players

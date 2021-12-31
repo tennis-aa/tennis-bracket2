@@ -69,6 +69,21 @@ class Tournament(db.Model):
     elos = Column(JSON())
     results = Column(JSON())
 
+    def __init__(self,name,year,start_time,end_time,
+    points_per_round,atplink,bracketsize,surface,sets,players,elos,results):
+        self.name = name
+        self.year = year
+        self.start_time = start_time
+        self.end_time = end_time
+        self.points_per_round = points_per_round
+        self.atplink = atplink
+        self.bracketsize = bracketsize
+        self.surface = surface
+        self.sets = sets
+        self.players = players
+        self.elos = elos
+        self.results = results
+
 class BracketModel(db.Model):
     __tablename__ = "brackets"
     bracket_id = Column(Integer(),primary_key=True)

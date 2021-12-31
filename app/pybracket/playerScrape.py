@@ -1,7 +1,4 @@
 import bs4
-import os
-import json
-import re
 import math
 from selenium import webdriver # requires the installion of chromedriver
 from .ATP2bracket import exceptions
@@ -12,7 +9,8 @@ from .ATP2bracket import exceptions
 
 def ATPdrawScrape(atplink):
     chromeOptions = webdriver.ChromeOptions()
-    chromeOptions.headless = True
+    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
+    # chromeOptions.headless = True
     browser = webdriver.Chrome(options=chromeOptions)
     browser.get(atplink)
     soup = bs4.BeautifulSoup(browser.page_source, "html.parser")

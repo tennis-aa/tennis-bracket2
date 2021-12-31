@@ -28,12 +28,13 @@ def bracket(year,tournament):
         return redirect(url_for('index'))
 
     brack = models.BracketModel.query.filter(models.BracketModel.tournament_id == tourn.tournament_id).all()
-    users = models.User.query.filter(models.User.user_id.in_(tourn.results['table_results']['user'])).all()
+    user_ids = [i.user_id for i in brack]
+    users = models.User.query.filter(models.User.user_id.in_(user_ids)).all()
     users = {i.user_id:i.username for i in users}
     brackets = {}
     for i in brack:
         user = users[i.user_id]
-        brackets.update({user:[tourn.players[j] for j in i.bracket]})
+        brackets.update({user:[tourn.players[j] if j>=0 else "" for j in i.bracket]})
 
     results_dict = tourn.results
     results_dict['results'] = [tourn.players[j] if j>=0 else "" for j in results_dict['results']]

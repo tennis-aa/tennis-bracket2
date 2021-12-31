@@ -50,13 +50,22 @@ cur.execute("""
 
 
 # Add a user
-cur.execute("""
+usernames = ["Andres","Daniel","Felipe","Anamaria","Elo","felipe2"]
+for user in usernames:
+    cur.execute("""
+        INSERT INTO user_pass (username,password) 
     INSERT INTO user_pass (username,password) 
-        Values (%s,%s)
-""",
-("Edgar",generate_password_hash("a")))
+        INSERT INTO user_pass (username,password) 
+            Values (%s,%s)
+    """,
+    (user,generate_password_hash("a"))
+    )
 
 # Add a tournament
+
+## Load Wimbledon as an example for testing 
+b = pybracket.Bracket()
+b.loadFromFolder("../tennis-bracket/docs/Wimbledon 2021")
 
 def playernames2indices(target_list,player_list):
     x = []
@@ -70,25 +79,22 @@ def playernames2indices(target_list,player_list):
                 print('No match for ',i)
     return x
 
-b = pybracket.Bracket()
-b.loadFromFolder("../tennis-bracket/docs/Wimbledon 2021")
 b.results = playernames2indices(b.results,b.players)
 for i in b.brackets:
     b.brackets[i] = playernames2indices(b.brackets[i],b.players)
-b.sets = 3
 b.updateResults(scrape=False)
 
+# change usernames to user ids in table_results
 cur.execute("SELECT * FROM user_pass")
 for i in cur.fetchall():
     print(i[0],": ",i[1])
 b.table_results
-# for key in b.table_results:
-#     del b.table_results[key][3]
-# del b.brackets["SEGPAPA"]
-user_list = [5,2,8,4,3]
+user_list = [4,1,5,6,3,2]
 b.table_results['user'] = user_list
+
+# change usernames to user ids in brackets
 dict_key_list = list(b.brackets.keys())
-user_list = [2,3,8,4,5]
+user_list = [1,2,5,3,6,4]
 for i,j in enumerate(dict_key_list):
     b.brackets[user_list[i]] = b.brackets[j]
 
@@ -126,10 +132,10 @@ cur.execute("""
 
 # Add brackets
 b.table_results['user']
-user_list = [5,2,8,4,3]
+user_list = [1,2,3,4,5,6]
 cur.execute("SELECT tournament_id, name, year FROM tournaments")
 cur.fetchall()
-tournament_id = 4
+tournament_id = 1
 for i in user_list:
     cur.execute("""
         INSERT INTO brackets (
@@ -145,7 +151,7 @@ for i in user_list:
         json.dumps(b.brackets[i])
     ))
 
-cur.execute("SELECT user_id,bracket_id FROM brackets WHERE tournament_id=4")
+cur.execute("SELECT * FROM brackets WHERE tournament_id=2")
 cur.fetchall()
 cur.execute("DELETE FROM brackets WHERE tournament_id=2;")
 
