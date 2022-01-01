@@ -134,9 +134,8 @@ def generateElo(players,elo):
             else:
                 bracket.append(bracket[counter[j]-bracketSize+2*i+1])
                 bracket_elo.append(bracket_elo[counter[j]-bracketSize+2*i+1])
-    Elo = {"Elo":bracket}
 
-    return Elo
+    return bracket
 
 # The following function computes the probability of winning a 5 set match given the probability of winning a 3 set match.
 # The elo ratings used in this package are for 3 set matches. A conversion is necessary for 5 set matches.

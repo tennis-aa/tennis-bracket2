@@ -6,7 +6,7 @@
     <ul class="nav navbar-nav">
       {% if g.user %}
       <li><a href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></li>
-        {% if g.user.user_id < 4 %}
+        {% if g.user.user_id <= 4 %}
       <li><a href="{{ url_for('update.index') }}">Administrar</a></li>
         {% endif %}
       <li><a href="{{ url_for('auth.logout') }}">Cerrar sesion</a></li>

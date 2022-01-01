@@ -146,9 +146,10 @@ class Bracket:
             self.players = players
 
             print("You can run method Bracket.updateElo() to update the elo ratings.")
+            return True
         else:
             print("Players are up-to-date.")
-        return
+            return False
     
     def updateElo(self,player=None,elo=None):
         if player==None or elo==None:
@@ -158,9 +159,8 @@ class Bracket:
             self.elo[self.players.index(player)] = elo
         return
 
-    def updateElobracket(self):
-        self.brackets.update(basicBrackets.generateElo(self.players, self.elo))
-        return
+    def Elobracket(self):
+        return basicBrackets.generateElo(self.players, self.elo)
 
     def updateBrackets(self,user,bracket):
         self.brackets[user] = bracket
@@ -171,6 +171,7 @@ class Bracket:
             ATPData = playerScrape.ATPdrawScrape(self.atplink) # players, results, scores
             players = ATPData["players"]
             results = ATPData["results"]
+            results = playernames2indices(ATPData["results"],players)
             scores = ATPData["scores"]
             print("Data successfully downloaded...")
         else:
@@ -413,4 +414,16 @@ def cubic_formula(a,b,c,d,k):
     xi = (-1+(-3)**(1/2))/2
     C = xi**k*((delta1+(delta1**2-4*delta0**3)**(1/2))/2)**(1/3)
     x = -1/(3*a)*(b+C+delta0/C)
+    return x
+
+def playernames2indices(target_list,player_list):
+    x = []
+    for i in target_list:
+        for j,player in enumerate(player_list):
+            if i == player:
+                x.append(j)
+                break
+            if (j==len(player_list)-1):
+                x.append(-1)
+                print('No match for ',i)
     return x

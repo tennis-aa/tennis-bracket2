@@ -9,6 +9,9 @@
 <body>
   <div class="container">
     {% include 'header.jinja' %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
     <h2> Configuraciones de {{ b.tournament }} {{ b.year }} </h2>
     <form method="post">
       <label for="surface"> Superficie: </label>
@@ -18,17 +21,23 @@
         <option value="clay" {% if b.surface=='clay' %} selected="selected" {% endif %}> Polvo de ladrillo </option>
         <option value="grass" {% if b.surface=='grass' %} selected="selected" {% endif %}> Cesped </option> 
       </select>
-      <label for="sets"> Numero de sets</label>
+      <label for="sets"> Mejor de cuantos sets? </label>
       <select name="sets" id="sets">
-        <option value=3> 3 </option>
+        <option value=3 {% if b.sets == 3 %} selected="selected" {% endif %}> 3 </option>
         <option value=5 {% if b.sets == 5 %} selected="selected" {% endif %}> 5 </option>
       </select>
       <label for="atplink"> Enlace a la pagina de la ATP </label>
       <input type="text" value="{{ b.atplink }}" name="atplink" id="atplink">
+      <label for="starttime"> Hora de inicio </label>
+      <input type="datetime-local" name="starttime" id="starttime" value="{{ start_time }}">
+      <label for="endtime"> Hora de finalizacion </label>
+      <input type="datetime-local" name="endtime" id="endtime" value="{{ end_time }}">
+      <label for="timezone"> Zona horaria UTC </label>
+      <input type="number" name="timezone" id="timezone" value="{{ tz }}">
       <table>
         <tr>
           {% for i in range(b.rounds)%}
-            <th> Ronda {{ i }} </th>
+            <th> Ronda {{ i+1 }} </th>
           {% endfor %}
         </tr>
         <tr>
@@ -59,6 +68,9 @@
         </tr>
       </table>
       <input type="submit" value="Actualizar torneo">
+      <p>
+        La actualizacion puede tomar varios minutos.
+      </p>
     </form>
   </div>
 </body>
