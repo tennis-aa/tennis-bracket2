@@ -127,9 +127,6 @@ def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=3
 
     hours_to_start = time_to_start.days*24 + time_to_start.seconds//3600
     minutes_to_start = (time_to_start.seconds//60)%60
-    print(time_to_start)
-    print(hours_to_start)
-    print(minutes_to_start)
 
     render_vars.update({"rounds" : rounds, "counter" : counter, "year" : year, "tournament": tournament,
     "hours_to_start":hours_to_start,"minutes_to_start":minutes_to_start,

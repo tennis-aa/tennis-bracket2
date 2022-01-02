@@ -86,8 +86,6 @@ def profile():
     if request.method == 'POST':
         usernames = models.User.query.with_entities(models.User.username).all()
         usernames = [u[0] for u in usernames]
-        print(usernames)
-        print(type(usernames[0]))
         if request.form['btn'] == 'Cambiar nombre de usuario':
             username = request.form['username']
             if username is None:
