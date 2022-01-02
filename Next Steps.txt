@@ -1,5 +1,6 @@
 - interface to create a new tournament
 	- try catch potential mistakes in inputs
+- deploy
 
 - schedule updates
 - elo perform much better than the median robot. Why? Can we adapt the strategy of the robot?
