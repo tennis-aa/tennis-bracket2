@@ -1,6 +1,7 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from datetime import datetime,timezone,timedelta
 
 from . import models
 from . import auth
@@ -10,7 +11,7 @@ bp = Blueprint('tournaments', __name__)
 @bp.route('/')
 def index():
     tourn = models.Tournament.query.all()
-    tourn.sort(key = lambda x: x.start_time)
+    tourn.sort(key = lambda x: x.start_time,reverse=True)
     year_tournament_dict = {}
     for i in tourn:
         if i.year in year_tournament_dict:
@@ -32,9 +33,16 @@ def bracket(year,tournament):
     users = models.User.query.filter(models.User.user_id.in_(user_ids)).all()
     users = {i.user_id:i.username for i in users}
     brackets = {}
-    for i in brack:
-        user = users[i.user_id]
-        brackets.update({user:[tourn.players[j] if j>=0 else "" for j in i.bracket]})
+    tzlocal = datetime.utcnow().astimezone().tzinfo
+    localtime = datetime.now(tzlocal)
+    if localtime < tourn.start_time:
+        for i in brack:
+            user = users[i.user_id]
+            brackets.update({user:[""]*tourn.bracketsize})
+    else:
+        for i in brack:
+            user = users[i.user_id]
+            brackets.update({user:[tourn.players[j] if j>=0 else "" for j in i.bracket]})
 
     results_dict = tourn.results
     results_dict['results'] = [tourn.players[j] if j>=0 else "" for j in results_dict['results']]
@@ -55,12 +63,20 @@ def submit(year,tournament):
     else:
         bracket = [-1]*(tourn.bracketsize-1)
 
+    tzlocal = datetime.utcnow().astimezone().tzinfo
+    localtime = datetime.now(tzlocal)
+    time_to_start = tourn.start_time - localtime
     if request.method == 'GET':
+        if time_to_start.total_seconds() <= 0:
+            time_to_start = timedelta()
         render_vars = {'bracketSize':tourn.bracketsize,'players':tourn.players,
-            'elos':tourn.elos,'bracket':[tourn.players[j] if j>=0 else '' for j in bracket]}
+            'elos':tourn.elos,'bracket':[tourn.players[j] if j>=0 else '' for j in bracket],
+            'time_to_start':time_to_start}
 
         return bracketRender('submit',year,tournament,render_vars)
     elif request.method == 'POST':
+        if time_to_start.total_seconds() <= 0:
+            return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
         for i in range(tourn.bracketsize-1):
             try:
                 bracket[i] = tourn.players.index(request.form['select{}'.format(tourn.bracketsize+i)])
@@ -104,7 +120,19 @@ def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=3
     for j in range(rounds):
         counter[j+1] = counter[j] + int(bracketSize/(2**j))
 
+    try:
+        time_to_start = render_vars['time_to_start']
+    except:
+        time_to_start = timedelta()
+
+    hours_to_start = time_to_start.days*24 + time_to_start.seconds//3600
+    minutes_to_start = (time_to_start.seconds//60)%60
+    print(time_to_start)
+    print(hours_to_start)
+    print(minutes_to_start)
+
     render_vars.update({"rounds" : rounds, "counter" : counter, "year" : year, "tournament": tournament,
+    "hours_to_start":hours_to_start,"minutes_to_start":minutes_to_start,
     "cellheight": cellheight, "vspace": vspace, "hspace": hspace, "linewidth": linewidth})
 
     if render_type=='bracket':

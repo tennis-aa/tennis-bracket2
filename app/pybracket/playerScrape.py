@@ -1,3 +1,4 @@
+import os
 import bs4
 import math
 from selenium import webdriver # requires the installion of chromedriver
@@ -9,9 +10,13 @@ from .ATP2bracket import exceptions
 
 def ATPdrawScrape(atplink):
     chromeOptions = webdriver.ChromeOptions()
+    chromeOptions.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # chromeOptions.add_argument("--headless")
+    chromeOptions.add_argument("--disable-dev-shm-usage")
+    chromeOptions.add_argument("--no-sandbox")
     chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
     # chromeOptions.headless = True
-    browser = webdriver.Chrome(options=chromeOptions)
+    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),options=chromeOptions)
     browser.get(atplink)
     soup = bs4.BeautifulSoup(browser.page_source, "html.parser")
     browser.quit()

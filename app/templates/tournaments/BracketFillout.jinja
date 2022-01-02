@@ -77,6 +77,13 @@
       <li class="active"><a href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></li>
     </ul>
   </nav>
+  <div>
+  {% if hours_to_start == 0 and minutes_to_start == 0 %}
+    El torneo ya ha iniciado y las inscripciones estan cerradas.
+  {% else %}
+    Las inscripciones cierran en {{ hours_to_start }} horas y {{ minutes_to_start }} minutos.
+  {% endif %}
+  </div>
   <div class="bracket_container" style="position:relative;height:{{bracketSize/2*vspace}}px;width:{{ (rounds+1)*2*hspace }}px;">
     <form id="bracketForm" name="bracketForm" method="post">
     {% for j in range(rounds) %}
@@ -157,7 +164,7 @@
         </div>
       </div>
       <div id="userinfo-container" style="position: absolute; left: {{ (rounds-1)*hspace }}px; top: {{ vspace*(2**(rounds-2) - 5) }}px;width: {{ 3*hspace }}px; height: {{ vspace }}px; text-align: center"> 
-        <input type="submit" value="Save">
+        <input type="submit" value="Save" {% if hours_to_start == 0 and minutes_to_start == 0 %} disabled {% endif %}}>
       </div>
     </form>
   </div>

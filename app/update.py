@@ -81,9 +81,11 @@ def newtournament():
     if request.method == "POST":
         atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
         elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
+        print(request.form['starttime'])
+        print(request.form['endtime'])
         start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
         end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
-        tz = timezone(timedelta(hours=request.form["timezone"]))
+        tz = timezone(timedelta(hours=int(request.form["timezone"])))
         start_time = start_time.replace(tzinfo=tz)
         end_time = end_time.replace(tzinfo=tz)
         bracketsize = len(atpinfo['players'])

@@ -1,13 +1,13 @@
 # This file interacts with the database outside of the app
+# See create_db.py for interacting with the app with SQLAlchemy
 
 import psycopg2
-from app.password import password
 from werkzeug.security import check_password_hash, generate_password_hash
 import app.pybracket as pybracket
 import datetime
 import json
 
-conn = psycopg2.connect("dbname='tennis_bracket' user='postgres' host='localhost' password='{}'".format(password))
+conn = psycopg2.connect("dbname='tennis_bracket' user='postgres' host='localhost' password='{}'".format('password'))
 
 cur = conn.cursor()
 

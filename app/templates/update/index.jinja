@@ -13,10 +13,12 @@
       <div class="flash">{{ message }}</div>
     {% endfor %}
     
+    <ul>
+      <li><a href="{{ url_for('update.newtournament') }}"> Nuevo cuadro </a></li>
+    </ul>
     {% for year in year_tournament_dict %}
     <h2> {{ year }} </h2>
     <ul>
-      <li><a href="{{ url_for('update.newtournament') }}"> Nuevo cuadro </a></li>
       {% for tournament in year_tournament_dict[year] %}
       <li><a href="{{ url_for('update.tournament',year=year,tournament=tournament) }}"> {{ tournament }}</a></li>
       {% endfor %}
