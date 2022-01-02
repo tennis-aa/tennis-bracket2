@@ -50,11 +50,9 @@ cur.execute("""
 
 
 # Add a user
-usernames = ["Andres","Daniel","Felipe","Anamaria","Elo","felipe2"]
+usernames = ["Andres","Daniel","Felipe","Anamaria","Elo"]
 for user in usernames:
     cur.execute("""
-        INSERT INTO user_pass (username,password) 
-    INSERT INTO user_pass (username,password) 
         INSERT INTO user_pass (username,password) 
             Values (%s,%s)
     """,
@@ -151,7 +149,7 @@ for i in user_list:
         json.dumps(b.brackets[i])
     ))
 
-cur.execute("SELECT * FROM brackets WHERE tournament_id=2")
+cur.execute("SELECT * FROM user_pass")
 cur.fetchall()
 cur.execute("DELETE FROM brackets WHERE tournament_id=2;")
 
