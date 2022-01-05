@@ -75,20 +75,27 @@ def submit(year,tournament):
 
         return bracketRender('submit',year,tournament,render_vars)
     elif request.method == 'POST':
+        # The client side does not allow to make changes after begin of tournament, so the following if-block should never be reached
         if time_to_start.total_seconds() <= 0:
+            flash('Las inscripciones estan cerradas.')
             return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
-        for i in range(tourn.bracketsize-1):
-            try:
-                bracket[i] = tourn.players.index(request.form['select{}'.format(tourn.bracketsize+i)])
-            except:
-                pass
-        if brack:
-            models.BracketModel.query.filter((models.BracketModel.tournament_id == tourn.tournament_id) & (models.BracketModel.user_id == g.user.user_id)).update({'bracket':bracket})
-            models.db.session.commit()
-        else:
-            brack = models.BracketModel(g.user.user_id,tourn.tournament_id,bracket)
-            models.db.session.add(brack)
-            models.db.session.commit()
+        try:
+            for i in range(tourn.bracketsize-1):
+                try:
+                    bracket[i] = tourn.players.index(request.form['select{}'.format(tourn.bracketsize+i)])
+                except:
+                    pass
+            if brack:
+                models.BracketModel.query.filter((models.BracketModel.tournament_id == tourn.tournament_id) & (models.BracketModel.user_id == g.user.user_id)).update({'bracket':bracket})
+                models.db.session.commit()
+                flash('Su cuadro ha sido creado exitosamente.')
+            else:
+                brack = models.BracketModel(g.user.user_id,tourn.tournament_id,bracket)
+                models.db.session.add(brack)
+                models.db.session.commit()
+                flash('Su cuadro ha sido actualizado exitosamente.')
+        except:
+            flash("Hubo un error guradando su cuadro. Contacte al administrador.")
         return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
     else:
         return redirect(url_for('index'))

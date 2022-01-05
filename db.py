@@ -4,7 +4,7 @@
 import psycopg2
 from werkzeug.security import check_password_hash, generate_password_hash
 import app.pybracket as pybracket
-import datetime
+from datetime import datetime,timezone,timedelta
 import json
 
 conn = psycopg2.connect("dbname='tennis_bracket' user='postgres' host='localhost' password='{}'".format('password'))
@@ -115,8 +115,8 @@ cur.execute("""
 (
     "Wimbledon",
     2021,
-    datetime.datetime(2021,6,30,11,0,0,tzinfo=datetime.timezone(datetime.timedelta(hours=-4))),
-    datetime.datetime(2021,7,12,23,59,0,tzinfo=datetime.timezone(datetime.timedelta(hours=-4))),
+    datetime(2021,6,30,11,0,0,tzinfo=timezone(timedelta(hours=-4))),
+    datetime(2021,7,12,23,59,0,tzinfo=timezone(timedelta(hours=-4))),
     json.dumps(b.points_per_round),
     b.atplink,
     b.bracketSize,

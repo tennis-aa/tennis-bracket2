@@ -38,14 +38,18 @@ def tournament(year,tournament):
 
     b = db2bracket(tourn, brack)
 
+    start_time = datetime.strftime(b.start_time,'%Y-%m-%dT%H:%M')
+    end_time = datetime.strftime(b.end_time,'%Y-%m-%dT%H:%M')
+    tzlocal = timezone(datetime.utcoffset(b.start_time))
+    tz = int(datetime.utcoffset(b.start_time).total_seconds()/3600)
+
     if request.method == 'POST':
         try:
             b.surface = request.form['surface']
             b.sets = int(request.form['sets'])
             b.atplink = request.form['atplink']
-            tz = timezone(timedelta(hours=int(request.form['timezone'])))
-            b.start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tz)
-            b.end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tz)
+            b.start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
+            b.end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
             b.points_per_round = [int(request.form['points_per_round'+str(i)]) for i in range(b.rounds)]
             b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
             
@@ -67,9 +71,6 @@ def tournament(year,tournament):
             flash('Error actualizando el cuadro.')
         return redirect(url_for('update.tournament',year=year,tournament=tournament))
 
-    start_time = datetime.strftime(b.start_time,'%Y-%m-%dT%H:%M')
-    end_time = datetime.strftime(b.end_time,'%Y-%m-%dT%H:%M')
-    tz = int(datetime.utcoffset(b.start_time).total_seconds()/3600)
     return render_template('update/tournament.jinja', b=b, start_time = start_time, end_time = end_time, tz = tz)
 
 @bp.route('/newtournament',methods=('GET','POST'))

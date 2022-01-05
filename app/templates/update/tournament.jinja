@@ -32,8 +32,7 @@
       <input type="datetime-local" name="starttime" id="starttime" value="{{ start_time }}">
       <label for="endtime"> Hora de finalizacion </label>
       <input type="datetime-local" name="endtime" id="endtime" value="{{ end_time }}">
-      <label for="timezone"> Zona horaria UTC </label>
-      <input type="number" name="timezone" id="timezone" value="{{ tz }}">
+      <span> Zona horaria UTC {{ tz }}</span>
       <table>
         <tr>
           {% for i in range(b.rounds)%}
