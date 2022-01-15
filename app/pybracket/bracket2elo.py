@@ -18,5 +18,7 @@ exceptions = {
     "D Novak":"Dennis Novak",
     "B van de Zandschulp":"Botic Van De Zandschulp",
     "M McDonald":"Mackenzie Mcdonald",
-    "C O'Connell":"Christopher Oconnell"
+    "C O'Connell":"Christopher Oconnell",
+    "JM Cerundolo":"Juan Manuel Cerundolo",
+    "F Cerundolo":"Francisco Cerundolo"
 }

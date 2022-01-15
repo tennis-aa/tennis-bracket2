@@ -52,11 +52,11 @@ def tournament(year,tournament):
         b.points_per_round = [int(request.form['points_per_round'+str(i)]) for i in range(b.rounds)]
         b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
 
-        # try:
-        updated_players = b.updatePlayers()
-        # except:
-            # flash("Error actualizando jugadores")
-            # return redirect(url_for('update.tournament',year=year,tournament=tournament))
+        try:
+            updated_players = b.updatePlayers()
+        except:
+            flash("Error actualizando jugadores")
+            return redirect(url_for('update.tournament',year=year,tournament=tournament))
 
         try:
             if updated_players:

@@ -58,7 +58,7 @@ def eloScrape(players,surface):
             continue
         matches = 0
         Player_indices = []
-        if p_draw[-1]==")": # if the player entry has a seed, remove the see from the name
+        if p_draw[-1]==")": # if the player entry has a seed, remove the seed from the name
             p_draw_name = " ".join(p_draw.split()[0:-1])
         else:
             p_draw_name = p_draw
