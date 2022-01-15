@@ -85,23 +85,26 @@ def newtournament():
         return redirect(url_for('index'))
 
     if request.method == "POST":
-        atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
-        elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
-        start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
-        end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
-        tz = timezone(timedelta(hours=int(request.form["timezone"])))
-        start_time = start_time.replace(tzinfo=tz)
-        end_time = end_time.replace(tzinfo=tz)
-        bracketsize = len(atpinfo['players'])
-        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]}}
-        tourn = models.Tournament(request.form['name'],request.form['year'],start_time,end_time,[1,2,3,5,7,10,15],
-            request.form['atplink'],bracketsize,request.form['surface'],request.form['sets'],
-            atpinfo['players'],elos,results_dict)
-        models.db.session.add(tourn)
-        models.db.session.commit()
+        try:
+            atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
+            elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
+            start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
+            end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
+            tz = timezone(timedelta(hours=int(request.form["timezone"])))
+            start_time = start_time.replace(tzinfo=tz)
+            end_time = end_time.replace(tzinfo=tz)
+            bracketsize = len(atpinfo['players'])
+            results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]}}
+            tourn = models.Tournament(request.form['name'],request.form['year'],start_time,end_time,[1,2,3,5,7,10,15],
+                request.form['atplink'],bracketsize,request.form['surface'],request.form['sets'],
+                atpinfo['players'],elos,results_dict)
+            models.db.session.add(tourn)
+            models.db.session.commit()
+            return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
+        except:
+            flash("No se pudo crear el cuadro.")
+            return render_template("update/newtournament.jinja")
 
-        return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
-    
     return render_template("update/newtournament.jinja")
 
 

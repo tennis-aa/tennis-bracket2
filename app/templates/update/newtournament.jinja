@@ -9,6 +9,9 @@
 <body>
   <div class="container">
     {% include 'header.jinja' %}
+    {% for message in get_flashed_messages() %}
+      <div class="flash">{{ message }}</div>
+    {% endfor %}
     <h2> Torneo nuevo </h2>
     <form method="post">
       <label for="name"> Nombre del torneo: </label>
