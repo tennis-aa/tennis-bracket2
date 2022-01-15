@@ -425,5 +425,4 @@ def playernames2indices(target_list,player_list):
                 break
             if (j==len(player_list)-1):
                 x.append(-1)
-                print('No match for ',i)
     return x
