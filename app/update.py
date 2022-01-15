@@ -44,16 +44,21 @@ def tournament(year,tournament):
     tz = int(datetime.utcoffset(b.start_time).total_seconds()/3600)
 
     if request.method == 'POST':
+        b.surface = request.form['surface']
+        b.sets = int(request.form['sets'])
+        b.atplink = request.form['atplink']
+        b.start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
+        b.end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
+        b.points_per_round = [int(request.form['points_per_round'+str(i)]) for i in range(b.rounds)]
+        b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
+
         try:
-            b.surface = request.form['surface']
-            b.sets = int(request.form['sets'])
-            b.atplink = request.form['atplink']
-            b.start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
-            b.end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
-            b.points_per_round = [int(request.form['points_per_round'+str(i)]) for i in range(b.rounds)]
-            b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
-            
             updated_players = b.updatePlayers()
+        except:
+            flash("Error actualizando jugadores")
+            return redirect(url_for('update.tournament',year=year,tournament=tournament))
+
+        try:
             if updated_players:
                 b.updateElo()
             b.brackets[5] = b.Elobracket()
