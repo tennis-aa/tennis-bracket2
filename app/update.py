@@ -15,7 +15,7 @@ def index():
     if g.user.user_id > 4:
         return redirect(url_for('index'))
     tourn = models.Tournament.query.all()
-    tourn.sort(key = lambda x: x.start_time)
+    tourn.sort(key = lambda x: x.start_time,reverse=True)
     year_tournament_dict = {}
     for i in tourn:
         if i.year in year_tournament_dict:

@@ -2,8 +2,8 @@ import app
 
 # Create tables
 appl = app.create_app()
-app.models.db.drop_all()
-app.models.db.create_all()
+# app.models.db.drop_all()
+# app.models.db.create_all()
 
 # Add a new user
 from werkzeug.security import check_password_hash, generate_password_hash
