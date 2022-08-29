@@ -4,5 +4,7 @@ exceptions = {
     "Marcelo Tomas Barrios Vera":"MT Barrios Vera",
     "Holger Vitus Nodskov Rune":"HVN Rune",
     "Juan Manuel Cerundolo":"JM Cerundolo",
-    "Tomas Martin Etcheverry":"TM Etcheverry"
+    "Tomas Martin Etcheverry":"TM Etcheverry",
+    "Jeffrey John Wolf":"JJ Wolf",
+    "Juan Pablo Varillas":"JP Varillas"
 }

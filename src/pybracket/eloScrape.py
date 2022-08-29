@@ -3,7 +3,7 @@ import bs4
 import os
 import json
 import re
-from statistics import mean, quantiles
+from statistics import quantiles
 from .bracket2elo import exceptions
 
 def eloScrape(players,surface):
@@ -62,14 +62,11 @@ def eloScrape(players,surface):
             p_draw_name = " ".join(p_draw.split()[0:-1])
         else:
             p_draw_name = p_draw
-        if p_draw_name in exceptions.keys():
-            try:
-                ind = Player.index(exceptions[p_draw_name])
-                matches += 1
-                Player_indices.append(ind)
-            except:
-                pass
-        else:
+        try:
+            ind = Player.index(exceptions[p_draw_name])
+            matches += 1
+            Player_indices.append(ind)
+        except:
             for j,p_elo in enumerate(Player):
                 x = re.search(p_draw.split()[1],p_elo) # the index should match the last name
                 if x:
@@ -93,15 +90,5 @@ def eloScrape(players,surface):
     for i in range(len(elos)):
         if elos[i] == 1:
             elos[i] = quartiles[0]
-    # Request input from user for other players
-    # if len(conflicts)>0:
-    #     print("Elo stats: min=",min(elos_found),"; Q1=",quartiles[0],"; median=",quartiles[1],"; avg=",mean(elos_found),"; Q3=",quartiles[2],"; max=",max(elos_found))
-    #     manually = input("Do you want to input missing Elo ratings manually? (if not, missing elo ratings are imputed with the median) [y/n]: ")
-    #     for i in range(len(conflicts)):
-    #         if manually in ("y","yes"):
-    #             elo = input("Enter Elo rating for " + conflicts[i] + ": ")
-    #             elos[conflicts_indices[i]] = float(elo)
-    #         else:
-    #             elos[conflicts_indices[i]] = quartiles[1]
 
     return elos

@@ -19,8 +19,8 @@
       {% for tournament in year_tournament_dict[year] %}
       <li><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> {{ tournament }}</a></li>
       {% endfor %}
-    {% endfor %}
     </ul>
+    {% endfor %}
   </div>
 </body>
 </html>

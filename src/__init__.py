@@ -1,8 +1,7 @@
 import os
 
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from . import models
+from . import dbfirestore
 
 def create_app(test_config=None):
     # create and configure the app
@@ -12,8 +11,7 @@ def create_app(test_config=None):
     app.jinja_env.trim_blocks = True
     app.jinja_env.lstrip_blocks = True
     # configure database
-    models.setup_db(app)
-    # models.db_drop_and_create_all()
+    dbfirestore.setup_db(app)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing

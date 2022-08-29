@@ -5,7 +5,7 @@ from flask import (
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import models
+from . import dbfirestore
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -42,16 +42,19 @@ def login():
         username = request.form['username']
         password = request.form['password']
         error = None
-        user = models.User.query.filter_by(username=username).first()
+        docs = dbfirestore.db.collection("users").where("username","==",username).stream()
+        for doc in docs:
+            user = doc.to_dict()
+            break # only one user should be found anyway. we return the first
 
         if user is None:
             error = 'Incorrect username.'
-        elif not check_password_hash(user.password, password):
+        elif not check_password_hash(user["password"], password):
             error = 'Incorrect password.'
 
         if error is None:
             session.clear()
-            session['user_id'] = user.user_id
+            session['user_id'] = user["user_id"]
             return redirect(url_for('index'))
 
         flash(error)
@@ -66,7 +69,7 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        g.user = models.User.query.filter_by(user_id=user_id).first()
+        g.user = dbfirestore.db.collection("users").document(str(user_id)).get().to_dict()
 
 
 def login_required(view):
@@ -84,17 +87,17 @@ def login_required(view):
 @login_required
 def profile():
     if request.method == 'POST':
-        usernames = models.User.query.with_entities(models.User.username).all()
-        usernames = [u[0] for u in usernames]
         if request.form['btn'] == 'Cambiar nombre de usuario':
             username = request.form['username']
+            docs = dbfirestore.db.collection("users").stream()
+            usernames = [i["username"] for i in docs]
             if username is None:
                 error = 'Ingrese el nuevo usuario'
             elif username in usernames:
                 error = 'El nombre de usuario ' + username + ' ya existe.'
             else:
-                g.user.username = username
-                models.db.session.commit()
+                g.user["username"] = username
+                dbfirestore.update_user(g.user["user_id"],username)
                 error = 'Su nuevo nombre de usuario es ' + username
         if request.form['btn'] == 'Cambiar contraseña':
             password = request.form['password']
@@ -102,8 +105,8 @@ def profile():
             if (password != password2) or (password is None):
                 error = 'Error: ingrese la misma contraseña.'
             else:
-                g.user.password = generate_password_hash(password)
-                models.db.session.commit()
+                g.user["password"] = generate_password_hash(password)
+                dbfirestore.update_user(g.user["user_id"],password=g.user["password"])
                 error = 'Su contraseña ha sido actualizada.'
 
         flash(error)

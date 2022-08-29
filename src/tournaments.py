@@ -3,74 +3,85 @@ from flask import (
 )
 from datetime import datetime,timezone,timedelta
 
-from . import models
+from . import dbfirestore
 from . import auth
 
 bp = Blueprint('tournaments', __name__)
 
 @bp.route('/')
 def index():
-    tourn = models.Tournament.query.all()
-    tourn.sort(key = lambda x: x.start_time,reverse=True)
+    tournament_docs = dbfirestore.db.collection("tournaments").stream()
+    tournaments = [i.to_dict() for i in tournament_docs if i.id != "tournamentcount"]
+    tournaments.sort(key = lambda x: x["start_time"],reverse=True)
     year_tournament_dict = {}
-    for i in tourn:
-        if i.year in year_tournament_dict:
-            year_tournament_dict[i.year].append(i.name)
+    for i in tournaments:
+        if i["year"] in year_tournament_dict:
+            year_tournament_dict[i["year"]].append(i["name"])
         else:
-            year_tournament_dict[i.year] = [i.name]
+            year_tournament_dict[i["year"]] = [i["name"]]
     return render_template('index.jinja',year_tournament_dict=year_tournament_dict)
 
 @bp.route('/<year>/<tournament>')
 @auth.login_required
 def bracket(year,tournament):
-    tourn = models.Tournament.query.filter((models.Tournament.name == tournament) & (models.Tournament.year == year)).first()
+    tourn = dbfirestore.get_tournament(tournament,year)
     if tourn is None:
         flash('could not find tournament')
         return redirect(url_for('index'))
 
-    brack = models.BracketModel.query.filter(models.BracketModel.tournament_id == tourn.tournament_id).all()
-    user_ids = [i.user_id for i in brack]
-    users = models.User.query.filter(models.User.user_id.in_(user_ids)).all()
-    users = {i.user_id:i.username for i in users}
+    brack = dbfirestore.db.collection("brackets").where("tournament_id","==",tourn["tournament_id"]).stream()
+    brack = [i.to_dict() for i in brack]
+    user_ids = [i["user_id"] for i in brack]
+    users = {}
+    for i in user_ids:
+        user = dbfirestore.db.collection("users").document(str(i)).get().to_dict()
+        users[i] = user["username"]
     brackets = {}
     tzlocal = datetime.utcnow().astimezone().tzinfo
     localtime = datetime.now(tzlocal)
-    if localtime < tourn.start_time:
+    if localtime < tourn["start_time"]:
         for i in brack:
-            user = users[i.user_id]
-            brackets.update({user:[""]*tourn.bracketsize})
+            user = users[i["user_id"]]
+            brackets.update({user:[""]*tourn["bracketsize"]})
     else:
         for i in brack:
-            user = users[i.user_id]
-            brackets.update({user:[tourn.players[j] if j>=0 else "" for j in i.bracket]})
+            user = users[i["user_id"]]
+            brackets.update({user:[tourn["players"][j] if j>=0 else "" for j in i["bracket"]]})
 
-    results_dict = tourn.results
-    results_dict['results'] = [tourn.players[j] if j>=0 else "" for j in results_dict['results']]
-    results_dict['losers'] = [tourn.players[j] for j in results_dict['losers']]
+    results_dict = tourn["results"]
+    results_dict['results'] = [tourn["players"][j] if j>=0 else "" for j in results_dict['results']]
+    results_dict['losers'] = [tourn["players"][j] for j in results_dict['losers']]
     results_dict['table_results']['user'] = [users[i] for i in results_dict['table_results']['user']]
     
-    render_vars = {'bracketSize':tourn.bracketsize,'players':tourn.players,'brackets':brackets,
+    render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],'brackets':brackets,
         'results_dict':results_dict}
     return bracketRender('bracket',year,tournament,render_vars)
 
 @bp.route('/<year>/<tournament>/submit',methods=('GET','POST'))
 @auth.login_required
 def submit(year,tournament):
-    tourn = models.Tournament.query.filter((models.Tournament.name == tournament) & (models.Tournament.year == year)).first()
-    brack = models.BracketModel.query.filter((models.BracketModel.tournament_id == tourn.tournament_id) & (models.BracketModel.user_id == g.user.user_id)).first()
-    if brack:
-        bracket = brack.bracket
+    tourn = dbfirestore.get_tournament(tournament,year)
+    if tourn is None:
+        flash('could not find tournament')
+        return redirect(url_for('index'))
+
+    brack = dbfirestore.db.collection("brackets").where("tournament_id","==",tourn["tournament_id"]).where("user_id","==",g.user["user_id"]).get()
+    if len(brack) == 1:
+        brack = brack[0].to_dict()
+        bracket = brack["bracket"]
     else:
-        bracket = [-1]*(tourn.bracketsize-1)
+        brack = None
+        bracket = [-1]*(tourn["bracketsize"]-1)
 
     tzlocal = datetime.utcnow().astimezone().tzinfo
     localtime = datetime.now(tzlocal)
-    time_to_start = tourn.start_time - localtime
+    time_to_start = tourn["start_time"] - localtime
+
     if request.method == 'GET':
         if time_to_start.total_seconds() <= 0:
             time_to_start = timedelta()
-        render_vars = {'bracketSize':tourn.bracketsize,'players':tourn.players,
-            'elos':tourn.elos,'bracket':[tourn.players[j] if j>=0 else '' for j in bracket],
+        render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],
+            'elos':tourn["elos"],'bracket':[tourn["players"][j] if j>=0 else '' for j in bracket],
             'time_to_start':time_to_start}
 
         return bracketRender('submit',year,tournament,render_vars)
@@ -80,19 +91,16 @@ def submit(year,tournament):
             flash('Las inscripciones estan cerradas.')
             return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
         try:
-            for i in range(tourn.bracketsize-1):
+            for i in range(tourn["bracketsize"]-1):
                 try:
-                    bracket[i] = tourn.players.index(request.form['select{}'.format(tourn.bracketsize+i)])
+                    bracket[i] = tourn["players"].index(request.form['select{}'.format(tourn["bracketsize"]+i)])
                 except:
                     pass
-            if brack:
-                models.BracketModel.query.filter((models.BracketModel.tournament_id == tourn.tournament_id) & (models.BracketModel.user_id == g.user.user_id)).update({'bracket':bracket})
-                models.db.session.commit()
+            if brack is None:
+                dbfirestore.add_bracket(g.user["user_id"],tourn["tournament_id"],bracket)
                 flash('Su cuadro ha sido creado exitosamente.')
             else:
-                brack = models.BracketModel(g.user.user_id,tourn.tournament_id,bracket)
-                models.db.session.add(brack)
-                models.db.session.commit()
+                dbfirestore.update_bracket(brack["bracket_id"], {"bracket" : bracket})
                 flash('Su cuadro ha sido actualizado exitosamente.')
         except:
             flash("Hubo un error guradando su cuadro. Contacte al administrador.")
@@ -103,13 +111,18 @@ def submit(year,tournament):
 @bp.route('/<year>/<tournament>/table')
 @auth.login_required
 def table(year,tournament):
-    tourn = models.Tournament.query.filter((models.Tournament.name == tournament) & (models.Tournament.year == year)).first()
+    tourn = dbfirestore.get_tournament(tournament,year)
+    if tourn is None:
+        flash('could not find tournament')
+        return redirect(url_for('index'))
 
-    users = models.User.query.filter(models.User.user_id.in_(tourn.results['table_results']['user'])).all()
-    users = {i.user_id:i.username for i in users}
+    users = {}
+    for i in tourn["results"]['table_results']['user']:
+        user = dbfirestore.db.collection("users").document(str(i)).get().to_dict()
+        users[i] = user["username"]
 
-    tourn.results['table_results']['user'] = [users[i] for i in tourn.results['table_results']['user']]
-    render_vars = {'bracketSize':tourn.bracketsize,'table_results':tourn.results['table_results']}
+    tourn["results"]['table_results']['user'] = [users[i] for i in tourn["results"]['table_results']['user']]
+    render_vars = {'bracketSize':tourn["bracketsize"],'table_results':tourn["results"]['table_results']}
     return bracketRender('table',year,tournament,render_vars)
 
 

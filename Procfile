@@ -1,1 +1,0 @@
-web: gunicorn appl:appl

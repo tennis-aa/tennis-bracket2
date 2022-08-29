@@ -11,14 +11,20 @@ exceptions = {
     "P Martinez":"Pedro Martinez",
     "F Auger-Aliassime":"Felix Auger Aliassime",
     "T Daniel":"Taro Daniel",
-    "B van de Zandschulp":"Botic van de Zandschulp",
     "J Sousa":"Joao Sousa",
     "P Sousa":"Pedro Sousa",
     "E Gomez":"Emilio Gomez",
     "D Novak":"Dennis Novak",
     "B van de Zandschulp":"Botic Van De Zandschulp",
+    "B Van de Zandschulp":"Botic Van De Zandschulp",
     "M McDonald":"Mackenzie Mcdonald",
     "C O'Connell":"Christopher Oconnell",
     "JM Cerundolo":"Juan Manuel Cerundolo",
-    "F Cerundolo":"Francisco Cerundolo"
+    "F Cerundolo":"Francisco Cerundolo",
+    "R Bautista Agut":"Roberto Bautista Agut",
+    "H Dellien":"Hugo Dellien",
+    "T Paul":"Tommy Paul",
+    "P Cuevas":"Pablo Cuevas",
+    "T van Rijthoven":"Tim Van Rijthoven",
+    "Y Wu":"Yibing Wu"
 }

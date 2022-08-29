@@ -1,25 +1,13 @@
 import os
 import bs4
 import math
-from selenium import webdriver # requires the installion of chromedriver
+import requests
 from .ATP2bracket import exceptions
 
 # scrape players from ATP website
-# This is working great! player_names has all the players by round, so it includes results
-# It does not include the seed and has the long names
-
 def ATPdrawScrape(atplink):
-    chromeOptions = webdriver.ChromeOptions()
-    chromeOptions.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chromeOptions.add_argument("--headless")
-    chromeOptions.add_argument("--disable-dev-shm-usage")
-    chromeOptions.add_argument("--no-sandbox")
-    chromeOptions.add_experimental_option('excludeSwitches', ['enable-logging'])
-    # chromeOptions.headless = True
-    browser = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"),options=chromeOptions)
-    browser.get(atplink)
-    soup = bs4.BeautifulSoup(browser.page_source, "html.parser")
-    browser.quit()
+    page = requests.get(atplink)
+    soup = bs4.BeautifulSoup(page.text, "html.parser")
     draw = soup.find(id="scoresDrawTable").find("tbody")
     rows = draw.findChildren("tr",recursive=False)
 
@@ -46,9 +34,9 @@ def ATPdrawScrape(atplink):
             player_entries.append("Qualifier{}".format(qualifier_count))
             continue
 
-        if player_names[i] in exceptions.keys():
+        try:
             player_entry = (exceptions[player_names[i]] + " " + player_seed[i]).strip()
-        else:
+        except:
             player_name_list = player_names[i].split()
             player_entry = " ".join([player_name_list[0][0]] + player_name_list[1:] + [player_seed[i]]).strip()
         player_entries.append(player_entry)
