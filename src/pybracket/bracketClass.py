@@ -100,7 +100,7 @@ class Bracket:
         for i in range(len(self.players)):
             if self.players[i] == "Bye":
                 points = points-self.points_per_round[0]
-        
+
         return points
 
     def computePotential(self,bracket):
@@ -262,8 +262,8 @@ class Bracket:
         reps = 10000
         outcomes = self.sim_results(reps)
         prob_winning = [0.0]*len(table_results["user"])
-        for key in outcomes:
-            self.results = outcomes[key] # to compute points, temporarily change the results
+        for outcome in outcomes:
+            self.results = outcome # to compute points, temporarily change the results
             # compute the points obtained for a given simulated outcome
             points = []
             for user in table_results["user"]:
@@ -289,15 +289,20 @@ class Bracket:
     def monkey_points(self,n):
         monkeys = basicBrackets.generateMonkeys(self.players, n)
         monkey_points = []
-        for key in monkeys:
-            monkey_points.append(self.computePoints(monkeys[key]))
+        for monkey in monkeys:
+            monkey_points.append(self.computePoints(monkey))
         return monkey_points
 
     def bot_points(self,n):
-        bots = basicBrackets.generateBots(self.players, self.elo, n, sets=self.sets)
+        c0 = 15
+        c1 = 4
+        def probability_modifier(probability,bracketSize,round,points_per_round):
+            c = 1 + c0 *(1 - ((round-1)/(self.rounds - 1))**c1)
+            return 1 - (2*(1-probability))**c/2
+        bots = basicBrackets.generateBots(self.elo, n, self.sets, self.points_per_round, probability_modifier)
         bot_points = []
-        for key in bots:
-            bot_points.append(self.computePoints(bots[key]))
+        for bot in bots:
+            bot_points.append(self.computePoints(bot))
         return bot_points
 
     def sim_results(self,n):
@@ -310,7 +315,7 @@ class Bracket:
                 results_elo.append(self.elo[i])
         
         # generate a dict of possible scenarios according to the elos. Similar to generating bot brackets but now we fix the results that have already happened
-        output = {}
+        output = []
         for k in range(n):
             bracket = []
             bracket_elo = []
@@ -357,7 +362,7 @@ class Bracket:
                     else:
                         bracket.append(bracket[self.counter[j]-self.bracketSize+2*i+1])
                         bracket_elo.append(bracket_elo[self.counter[j]-self.bracketSize+2*i+1])
-            output["res"+str(k)] = bracket
+            output.append(bracket)
         return output
 
     def saveToFolder(self):

@@ -14,7 +14,7 @@ def generateMonkeys(players,n):
         counter[j+1] = counter[j] + int(bracketSize/(2**j))
 
     # generate random brackets
-    monkeys = {}
+    monkeys = []
     for k in range(n):
         bracket = []
         for i in range(int(bracketSize/2)):
@@ -33,34 +33,35 @@ def generateMonkeys(players,n):
                     bracket.append(bracket[counter[j]-bracketSize+2*i])
                 else:
                     bracket.append(bracket[counter[j]-bracketSize+2*i+1])
-        monkeys["monkey"+str(k)] = bracket
+        monkeys.append(bracket)
 
     return monkeys
 
-
-def generateBots(players,elo,n,sets=3):
+def generateBots(elo,n,sets=3,points_per_round=[1,2,3,5,7,10,15],prob_modifier=lambda probability,bracketsize,round,pointsperround: probability):
     # helper variables
-    bracketSize = len(players)
+    bracketSize = len(elo)
     rounds = math.log(bracketSize,2)
     if not rounds.is_integer():
         raise ValueError("bracketSize has to be 2^n")
     rounds = int(rounds)
-    
+    if len(points_per_round) < rounds:
+        raise ValueError("points_per_round does not have points for all rounds")
+
     counter = [0]*(rounds+1)
     for j in range(rounds):
         counter[j+1] = counter[j] + int(bracketSize/(2**j))
 
     # generate brackets based on probabilities from elo
-    bots = {}
+    bots = []
     for k in range(n):
         bracket = []
         bracket_elo = []
         for i in range(int(bracketSize/2)):
-            if players[2*i]=="Bye":
+            if elo[2*i]==0:
                 bracket.append(2*i+1)
                 bracket_elo.append(elo[2*i+1])
                 continue
-            elif players[2*i+1]=="Bye":
+            elif elo[2*i+1]==0:
                 bracket.append(2*i)
                 bracket_elo.append(elo[2*i])
                 continue
@@ -70,6 +71,7 @@ def generateBots(players,elo,n,sets=3):
             probability = Q1/(Q1+Q2)
             if sets == 5:
                 probability = fiveodds_eff(probability)
+            probability = prob_modifier(probability,bracketSize,j,points_per_round)
             if random() < probability:
                 bracket.append(2*i)
                 bracket_elo.append(elo[2*i])
@@ -84,13 +86,14 @@ def generateBots(players,elo,n,sets=3):
                 probability = Q1/(Q1+Q2)
                 if sets == 5:
                     probability = fiveodds_eff(probability)
+                probability = prob_modifier(probability,bracketSize,j,points_per_round)
                 if random() < probability:
                     bracket.append(bracket[counter[j]-bracketSize+2*i])
                     bracket_elo.append(bracket_elo[counter[j]-bracketSize+2*i])
                 else:
                     bracket.append(bracket[counter[j]-bracketSize+2*i+1])
                     bracket_elo.append(bracket_elo[counter[j]-bracketSize+2*i+1])
-        bots["bot"+str(k)] = bracket
+        bots.append(bracket)
 
     return bots
 
