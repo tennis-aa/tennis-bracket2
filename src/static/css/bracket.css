@@ -1,5 +1,5 @@
 :root {
-  --cellheight: 16px;
+  --cellheight: 32px;
   --fontsize: 9.6px;
   --hspace: 100px;
   --vspace: 32px;
@@ -17,6 +17,8 @@
   border-radius: 0px;
   background-color: transparent;
   overflow: visible;
+  display: flex;
+  align-items: flex-end;
 }
 
 .score {
@@ -40,7 +42,7 @@
 
 
 .playerselect {
-  height: 100%;
+  height: calc(0.5*var(--cellheight));
   width: 100%;
   font-size: var(--fontsize);
 }
@@ -49,6 +51,13 @@
   font-size: var(--fontsize);
   font-family: Arial, Helvetica, sans-serif;
   cursor: default;
+  border-radius: 50%;
+  color: white;
+  background-color: #606060;
+  height: calc(1.5*var(--fontsize));
+  aspect-ratio: 1/1;
+  text-align: center;
+  font-weight: bold;
 }
 
 
@@ -69,7 +78,7 @@
 .right {
   position: absolute;
   z-index: 1;
-  left: 101%;
+  left: 10px;
   top: -50%;
 }
 .left {
@@ -78,12 +87,3 @@
   left: calc(-1.01*var(--hspace));
   top:-50%;
 }
-
-/* @media (max-width: 600px) {
-  :root {
-    --vspace: 16px;
-    --cellheight: 8px;
-    --hspace: 50px;
-    --fontsize: 4.8px;
-  }
-} */

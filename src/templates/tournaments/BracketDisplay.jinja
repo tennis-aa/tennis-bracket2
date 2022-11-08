@@ -2,6 +2,7 @@
 <html>
 <head>
   <title> {{ tournament }} {{ year }} </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
@@ -50,7 +51,7 @@
   {% endfor %}
     <div class="line" style="position: absolute; left: calc({{ rounds }} * var(--hspace)); top: calc( var(--vspace) * {{ 2**(rounds-2) - 2 }} + var(--cellheight) - var(--linewidth)); height: calc(1.5*var(--vspace) + var(--linewidth))"> </div>
     <div class="line" style="position: absolute; left: calc({{ rounds+1 }}*var(--hspace)); top:calc(var(--vspace)*{{ 2**(rounds-2) - 2 }} + var(--cellheight) - var(--linewidth)); height: calc(1.5*var(--vspace) + var(--linewidth))"> </div>
-    <div class="player" id="p{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top:calc(var(--vspace)*{{ 2**(rounds-2) - 2 }}); text-align: center"> </div>
+    <div class="player" id="p{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top:calc(var(--vspace)*{{ 2**(rounds-2) - 2 }}); justify-content: center"> </div>
     <div class="score" id="score{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top: calc(var(--vspace)*{{ 2**(rounds-2) - 2 }} + var(--cellheight)); text-align: center"> </div>
 
     <div id="userinfo-container" style="position: absolute; left: calc({{ rounds-1 }}*var(--hspace)); top: var(--vspace);width: calc(3*var(--hspace)); height: var(--vspace); text-align: center;"> 

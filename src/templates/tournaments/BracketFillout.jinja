@@ -2,6 +2,7 @@
 <html>
 <head>
   <title> {{ tournament }}  {{ year }} </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/png" href="{{ url_for('static',filename='favicon.png') }}"/>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
@@ -18,7 +19,7 @@
 
 </head>
 <body onLoad="loadFillout()">
-<div class="container-fluid">
+<div class="container">
   {% include 'header.jinja' %}
   <h2> {{ tournament }} {{ year}} </h2>
   <nav class="navbar navbar-default border-primary">
@@ -54,7 +55,7 @@
           {% endif %}
       </div>
           {% if j>0 %}
-      <div class="mytooltipcontainer" style="position: absolute; left: calc({{ j+1 }}*var(--hspace) + 1px); top: calc({{ i*2**j + (2**(j-1) - 1/2)}} * var(--vspace))"> 
+      <div class="mytooltipcontainer" style="position: absolute; left: calc({{ j+1 }}*var(--hspace) + 1px); top: calc({{ i*2**j + (2**(j-1))}} * var(--vspace))"> 
         ? 
         <div class="mytooltip right" id="tip{{ counter[j] + i }}">
           <table>
@@ -80,7 +81,7 @@
           {% endif%}
       </div>
           {% if j>0 %}
-      <div class="mytooltipcontainer" style="position: absolute; left: calc(var(--hspace) * {{ 2*rounds - j - 0.1 }}); top: calc({{ (i-bracketSize/(2**(j+1)))*(2**j) + (2**(j-1) - 1/2)}} * var(--vspace))"> 
+      <div class="mytooltipcontainer" style="position: absolute; left: calc(var(--hspace) * {{ 2*rounds - j - 0.15 }}); top: calc({{ (i-bracketSize/(2**(j+1)))*(2**j) + 2**(j-1)}} * var(--vspace))"> 
         ? 
         <div class="mytooltip left" id="tip{{ counter[j] + i }}">
           <table>
@@ -104,7 +105,7 @@
           <option></option>
         </select>
       </div>
-      <div class="mytooltipcontainer" style="position: absolute; left:calc({{ rounds + 1.01}} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 2 }}); text-align: center"> 
+      <div class="mytooltipcontainer" style="position: absolute; left:calc({{ rounds + 1.01}} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 1.5 }}); text-align: center"> 
         ? 
         <div class="mytooltip right" id="tip{{ counter[rounds] }}">
           <table>
