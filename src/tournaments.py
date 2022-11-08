@@ -128,7 +128,7 @@ def table(year,tournament):
 
 
 import math
-def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=32,hspace=100,linewidth=1):
+def bracketRender(render_type,year,tournament,render_vars):
     bracketSize = render_vars['bracketSize']
     rounds = math.log(bracketSize,2)
     if not rounds.is_integer():
@@ -149,8 +149,7 @@ def bracketRender(render_type,year,tournament,render_vars,cellheight=16,vspace=3
     minutes_to_start = (time_to_start.seconds//60)%60
 
     render_vars.update({"rounds" : rounds, "counter" : counter, "year" : year, "tournament": tournament,
-    "hours_to_start":hours_to_start,"minutes_to_start":minutes_to_start,
-    "cellheight": cellheight, "vspace": vspace, "hspace": hspace, "linewidth": linewidth})
+    "hours_to_start":hours_to_start,"minutes_to_start":minutes_to_start})
 
     if render_type=='bracket':
         template_filename = 'tournaments/BracketDisplay.jinja'

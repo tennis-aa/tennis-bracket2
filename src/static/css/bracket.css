@@ -1,0 +1,89 @@
+:root {
+  --cellheight: 16px;
+  --fontsize: 9.6px;
+  --hspace: 100px;
+  --vspace: 32px;
+  --linewidth: 1px
+}
+
+.player {
+  font-size: var(--fontsize);
+  font-family: Arial, Helvetica, sans-serif;
+  width: var(--hspace);
+  height: var(--cellheight);
+  text-align: left;
+  padding-left: calc(var(--hspace)*0.03);
+  border-bottom: var(--linewidth) solid black;
+  border-radius: 0px;
+  background-color: transparent;
+  overflow: visible;
+}
+
+.score {
+  font-size: var(--fontsize);
+  font-family: Arial, Helvetica, sans-serif;
+  width: var(--hspace);
+  height: var(--cellheight);
+  text-align: left;
+  padding-left: calc(var(--hspace)*0.03);
+  background-color: transparent;
+  overflow: visible;
+}
+
+.line {
+  border-left: var(--linewidth) solid black; 
+}
+
+#userinfo-container {
+  font-size: calc(1.5*var(--fontsize));
+}
+
+
+.playerselect {
+  height: 100%;
+  width: 100%;
+  font-size: var(--fontsize);
+}
+
+.mytooltipcontainer {
+  font-size: var(--fontsize);
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: default;
+}
+
+
+.mytooltipcontainer:hover .mytooltip {
+  visibility: visible;
+}
+
+.mytooltip {
+  visibility: hidden;
+  width: var(--hspace); 
+  min-height: calc(2*var(--cellheight));
+  background-color: white;
+  color: black;
+  border-radius: 3px;
+  border: 1px solid black;
+}
+
+.right {
+  position: absolute;
+  z-index: 1;
+  left: 101%;
+  top: -50%;
+}
+.left {
+  position: absolute;
+  z-index: 1;
+  left: calc(-1.01*var(--hspace));
+  top:-50%;
+}
+
+/* @media (max-width: 600px) {
+  :root {
+    --vspace: 16px;
+    --cellheight: 8px;
+    --hspace: 50px;
+    --fontsize: 4.8px;
+  }
+} */
