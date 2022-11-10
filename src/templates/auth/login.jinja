@@ -14,9 +14,13 @@
   <div class="flash">{{ message }}</div>
 {% endfor %}
   <form method="post">
-    <label for="username">Username</label>
+    <label for="username">
+      {% if g.user.language == "spanish" %} Nombre de usuario {% else %} Username {% endif %}
+    </label>
     <input name="username" id="username" required>
-    <label for="password">Password</label>
+    <label for="password">
+      {% if g.user.language == "spanish" %} Contraseña {% else %} Password {% endif %}
+    </label>
     <input type="password" name="password" id="password" required>
     <input type="submit" value="Log In">
   </form>

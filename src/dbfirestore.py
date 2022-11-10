@@ -10,7 +10,7 @@ setup_db(app):
 def setup_db(app):
     pass
 
-def add_user(username, password):
+def add_user(username, password, language):
     coll = db.collection("users")
     doc_usercount = coll.document("usercount")
     usercount = doc_usercount.get().to_dict()["count"]
@@ -20,18 +20,21 @@ def add_user(username, password):
     doc_user = coll.document(str(usercount))
     doc_user.set({"user_id": usercount,
                   "username": username,
-                  "password": password})
+                  "password": password,
+                  "language": language})
 
-def update_user(id,username=None,password=None):
+def update_user(id,username=None,password=None,language=None):
     coll = db.collection("users")
     doc_user = coll.document(str(id))
     existing_user = doc_user.get().to_dict()
     if existing_user is not None:
         if username is None: username = existing_user["username"]
         if password is None: password = existing_user["password"]
+        if language is None: language = existing_user["language"]
         doc_user.update({"user_id": id,
                   "username": username,
-                  "password": password})
+                  "password": password,
+                  "language": language})
         return True
     else:
         return False

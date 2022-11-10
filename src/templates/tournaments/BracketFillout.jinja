@@ -16,16 +16,21 @@
     let bracket = {{ bracket }};
   </script>
   <script type="application/javascript" src="{{ url_for('static',filename='js/filloutBracket.js') }}"></script>
-
 </head>
 <body onLoad="loadFillout()">
 {% include 'header.jinja' %}
 <nav class="navbar navbar-expand-sm tournament">
   <div class="tournament-name"> {{ tournament }} {{ year}} </div>
   <div class = "navbar-nav">
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></div>
-    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Cuadros {% else %} Brackets {% endif %}
+    </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Tabla de posiciones {% else %} Standings {% endif %}
+    </a></div>
+    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Crear cuadro {% else %} Fill out bracket {% endif %}
+    </a></div>
   </div>
 </nav>
 {% for message in get_flashed_messages() %}

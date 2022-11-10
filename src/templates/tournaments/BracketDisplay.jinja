@@ -14,16 +14,21 @@
     let results_dict = {{ results_dict }};
   </script>
   <script type=application/javascript src="{{ url_for('static', filename='js/displayBracket.js') }}"></script>
-
 </head>
 <body onLoad="loadDisplay()">
 {% include 'header.jinja' %}
 <nav class="navbar navbar-expand-sm tournament">
   <div class="tournament-name"> {{ tournament }} {{ year}} </div>
   <div class = "navbar-nav">
-    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></div>
+    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Cuadros {% else %} Brackets {% endif %}
+    </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Tabla de posiciones {% else %} Standings {% endif %}
+    </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Crear cuadro {% else %} Fill out bracket {% endif %}
+    </a></div>
   </div>
 </nav>
 <div class="container-bracket">
@@ -55,7 +60,9 @@
     <div class="score" id="score{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top: calc(var(--vspace)*{{ 2**(rounds-2) - 2 }} + var(--cellheight)); text-align: center"> </div>
 
     <div id="userinfo-container" style="position: absolute; left: calc({{ rounds-1 }}*var(--hspace)); top: var(--vspace);width: calc(3*var(--hspace)); height: var(--vspace); text-align: center;"> 
-      <label for="user"> Usuario </label>
+      <label for="user">
+        {% if g.user.language == "spanish" %} Usuario {% else %} User {% endif %}
+      </label>
       <select id="user" name="user" onchange="display_bracket()">
         <option></option>
       </select>

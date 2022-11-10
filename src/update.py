@@ -114,6 +114,7 @@ def newuser():
         username = request.form['username']
         password = request.form['password']
         password2 = request.form['password2']
+        language = request.form["language"]
         docs = dbfirestore.db.collection("users").stream()
         usernames = [i["username"] for i in docs]
         if username is None:
@@ -125,7 +126,7 @@ def newuser():
         elif password != password2:
             message = 'Las contraseñas no coinciden'
         else:
-            dbfirestore.add_user(username, generate_password_hash(password))
+            dbfirestore.add_user(username, generate_password_hash(password), language)
             message = 'El usuario ' + username + ' ha sido agregado exitosamente.'
 
         flash(message)

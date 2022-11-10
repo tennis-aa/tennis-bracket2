@@ -15,19 +15,37 @@
   {% endfor %}
     <div>
       <form method="post" onsubmit="return confirm('Esta seguro que quiere cambiar su nombre de usuario?');">
-        <label for="username"> Nuevo nombre de usuario </label>
+        <label for="username"> 
+          {% if g.user.language == "spanish" %} Nuevo nombre de usuario {% else %} New username {% endif %}
+        </label>
         <input name="username" id="username" required>
         <input type="submit" name="btn" value="Cambiar nombre de usuario">
       </form>
     </div>
     <div>
       <form method="post" name="password_change" onsubmit="return confirm('Esta seguro que quiere cambiar la contraseña?');">
-        <label for="password"> Nueva contraseña </label>
+        <label for="password"> 
+          {% if g.user.language == "spanish" %} Nueva contraseña {% else %} New password {% endif %}
+        </label>
         <input type="password" name="password" id="password" required>
         <br>
-        <label for="password2"> Reingrese la contraseña </label>
+        <label for="password2"> 
+          {% if g.user.language == "spanish" %} Reingrese la contraseña {% else %} Reenter password {% endif %}
+        </label>
         <input type="password" name="password2" id="password2" required>
         <input type="submit" name="btn" value="Cambiar contraseña">
+      </form>
+    </div>
+    <div>
+      <form method="post" onsubmit="return confirm('Esta seguro que quiere cambiar su idioma?');">
+        <label for="language">
+          {% if g.user.language == "spanish" %} Idioma {% else %} Language {% endif %}
+        </label>
+        <select name="language" id="language">
+          <option value="spanish" {% if g.user.language == "spanish" %} selected {% endif %}> Español </option>
+          <option value="english" {% if g.user.language == "english" %} selected {% endif %}> English </option>
+        </select>
+        <input type="submit" name="btn" value="Cambiar idioma">
       </form>
     </div>
   </div>

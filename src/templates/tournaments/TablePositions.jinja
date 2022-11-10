@@ -13,9 +13,15 @@
 <nav class="navbar navbar-expand-sm tournament">
   <div class="tournament-name"> {{ tournament }} {{ year}} </div>
   <div class = "navbar-nav">
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></div>
-    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Cuadros {% else %} Brackets {% endif %}
+    </a></div>
+    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Tabla de posiciones {% else %} Standings {% endif %}
+    </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}">
+      {% if g.user.language == "spanish" %} Crear cuadro {% else %} Fill out bracket {% endif %}
+    </a></div>
   </div>
 </nav>
 <div class="container-fluid">
@@ -24,13 +30,13 @@
       <thead>
         <tr>
           <th> Pos. </th>
-          <th> Usuario </th>
-          <th> Puntos </th>
-          <th> Potencial </th>
-          <th> Entre usuarios </th>
-          <th> Entre micos </th>
-          <th> Entre robots </th>
-          <th> Probabilidad de ganar </th>
+          <th> {% if g.user.language == "spanish" %} Usuario {% else %} User {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Puntos {% else %} Points {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Potencial {% else %} Potential {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Entre usuarios {% else %} Among users {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Entre micos {% else %} Among monkeys {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Entre robots {% else %} Among bots {% endif %} </th>
+          <th> {% if g.user.language == "spanish" %} Probabilidad de ganar {% else %} Probability of winning {% endif %} </th>
         </tr>
       </thead>
       <tbody>

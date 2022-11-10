@@ -60,29 +60,39 @@ def login_required(view):
 @login_required
 def profile():
     if request.method == 'POST':
-        if request.form['btn'] == 'Cambiar nombre de usuario':
+        if "username" in request.form:
             username = request.form['username']
             docs = dbfirestore.db.collection("users").stream()
             usernames = [i["username"] for i in docs]
             if username is None:
-                error = 'Ingrese el nuevo usuario'
+                message = 'Ingrese el nuevo usuario'
             elif username in usernames:
-                error = 'El nombre de usuario ' + username + ' ya existe.'
+                message = 'El nombre de usuario ' + username + ' ya existe.'
             else:
                 g.user["username"] = username
                 dbfirestore.update_user(g.user["user_id"],username)
-                error = 'Su nuevo nombre de usuario es ' + username
-        if request.form['btn'] == 'Cambiar contraseña':
+                message = 'Su nuevo nombre de usuario es ' + username
+        elif "password" in request.form:
             password = request.form['password']
             password2 = request.form['password2']
             if (password != password2) or (password is None):
-                error = 'Error: ingrese la misma contraseña.'
+                message = 'Error: ingrese la misma contraseña.'
             else:
                 g.user["password"] = generate_password_hash(password)
                 dbfirestore.update_user(g.user["user_id"],password=g.user["password"])
-                error = 'Su contraseña ha sido actualizada.'
+                message = 'Su contraseña ha sido actualizada.'
+        elif "language" in request.form:
+            language = request.form['language']
+            if language in ["spanish","english"]:
+                g.user["language"] = language
+                dbfirestore.update_user(g.user["user_id"],language=language)
+                message = 'Su idioma ha sido actualizado'
+            else:
+                message = "Idioma no disponible"
+        else:
+            message = "Error enviando la informacion al servidor"
 
-        flash(error)
+        flash(message)
     return render_template('auth/profile.jinja')
 
 
