@@ -1,11 +1,11 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from werkzeug.security import generate_password_hash
 from datetime import datetime,timezone,timedelta
 from . import pybracket
 from . import dbfirestore
 from . import auth
-import json
 
 bp = Blueprint('update', __name__,url_prefix='/update')
 
@@ -104,6 +104,32 @@ def newtournament():
         #     return render_template("update/newtournament.jinja")
 
     return render_template("update/newtournament.jinja")
+
+@bp.route('/newuser',methods=('GET','POST'))
+@auth.login_required
+def newuser():
+    if g.user["user_id"] > 4:
+        return redirect(url_for('index'))
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        password2 = request.form['password2']
+        docs = dbfirestore.db.collection("users").stream()
+        usernames = [i["username"] for i in docs]
+        if username is None:
+            message = 'Ingrese el nuevo usuario'
+        elif username in usernames:
+            message = 'El nombre de usuario "' + username + '" ya existe'
+        elif password is None:
+            message = 'Ingrese la contraseña'
+        elif password != password2:
+            message = 'Las contraseñas no coinciden'
+        else:
+            dbfirestore.add_user(username, generate_password_hash(password))
+            message = 'El usuario ' + username + ' ha sido agregado exitosamente.'
+
+        flash(message)
+    return render_template('update/newuser.jinja')
 
 
 def db2bracket(tourn,brack):

@@ -3,6 +3,5 @@
 - make an english version with users selecting their preferred language
 - make website prettier
 	- Make tournaments a table showing the leader
-- create interface to create new users
 
 - use utr as an alternative to elo?
