@@ -1,29 +1,31 @@
 :root {
-  --cellheight: 32px;
-  --fontsize: 9.6px;
+  --cellheight: 34px;
+  --vspace: 38px; /* vspace must be at least as big as cellheight */
+  --fontsize: 11px; /* fontsize must be smaller than cellheight*/
   --hspace: 100px;
-  --vspace: 32px;
   --linewidth: 1px
+}
+
+.container-bracket {
+  padding-left: 0.5vw;
 }
 
 .player {
   font-size: var(--fontsize);
-  font-family: Arial, Helvetica, sans-serif;
   width: var(--hspace);
   height: var(--cellheight);
   text-align: left;
-  padding-left: calc(var(--hspace)*0.03);
-  border-bottom: var(--linewidth) solid black;
+  padding-left: 3px;
+  border-bottom: var(--linewidth) solid var(--color1);
   border-radius: 0px;
   background-color: transparent;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   align-items: flex-end;
 }
 
 .score {
   font-size: var(--fontsize);
-  font-family: Arial, Helvetica, sans-serif;
   width: var(--hspace);
   height: var(--cellheight);
   text-align: left;
@@ -33,33 +35,24 @@
 }
 
 .line {
-  border-left: var(--linewidth) solid black; 
+  border-left: var(--linewidth) solid var(--color1); 
 }
-
-#userinfo-container {
-  font-size: calc(1.5*var(--fontsize));
-}
-
 
 .playerselect {
-  height: calc(0.5*var(--cellheight));
   width: 100%;
   font-size: var(--fontsize);
 }
 
 .mytooltipcontainer {
   font-size: var(--fontsize);
-  font-family: Arial, Helvetica, sans-serif;
   cursor: default;
   border-radius: 50%;
-  color: white;
-  background-color: #606060;
+  color: var(--myblack);
+  background-color: #E0E0E0;
   height: calc(1.5*var(--fontsize));
   aspect-ratio: 1/1;
   text-align: center;
-  font-weight: bold;
 }
-
 
 .mytooltipcontainer:hover .mytooltip {
   visibility: visible;
@@ -67,23 +60,35 @@
 
 .mytooltip {
   visibility: hidden;
-  width: var(--hspace); 
+  width: calc(var(--hspace) + 3*var(--fontsize));
   min-height: calc(2*var(--cellheight));
   background-color: white;
-  color: black;
+  color: var(--myblack);
   border-radius: 3px;
-  border: 1px solid black;
+  border: 1px solid var(--color1);
 }
 
 .right {
   position: absolute;
   z-index: 1;
-  left: 10px;
-  top: -50%;
+  left: calc(1.5*var(--fontsize) + 5px);
+  top: calc(-1*var(--cellheight) + 0.75*var(--fontsize));
 }
 .left {
   position: absolute;
   z-index: 1;
-  left: calc(-1.01*var(--hspace));
-  top:-50%;
+  left: calc(-1*var(--hspace) - 3*var(--fontsize) - 5px);
+  top: calc(-1*var(--cellheight) + 0.75*var(--fontsize));
+}
+
+.tiprow {
+  display: flex;
+  justify-content: space-between;
+  height: var(--cellheight);
+}
+
+.tipplayer {
+  width: var(--hspace);
+  text-align: left;
+  overflow: hidden;
 }

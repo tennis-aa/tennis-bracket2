@@ -4,7 +4,7 @@
   <title> {{ tournament }} {{ year }} </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bracket.css') }}">
   <script type=application/javascript>
@@ -17,17 +17,17 @@
 
 </head>
 <body onLoad="loadDisplay()">
-<div class="container-fluid">
-  {% include 'header.jinja' %}
-  <h2> {{ tournament }} {{ year}} </h2>
-  <nav class="navbar navbar-default border-primary">
-    <ul class = "nav navbar-nav">
-      <li class="active"><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></li>
-      <li><a href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></li>
-      <li><a href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></li>
-    </ul>
-  </nav>
-  <div class="bracket_container" style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ (rounds+1)*2 }}*var(--hspace));">
+{% include 'header.jinja' %}
+<nav class="navbar navbar-expand-sm tournament">
+  <div class="tournament-name"> {{ tournament }} {{ year}} </div>
+  <div class = "navbar-nav">
+    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></div>
+  </div>
+</nav>
+<div class="container-bracket">
+  <div style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ rounds*2 + 1 }}*var(--hspace));">
   {% for j in range(rounds) %}
     {% for i in range((bracketSize/(2**j)) | int) %}
       {%- if i < bracketSize/(2**(j+1)) %}
@@ -59,9 +59,13 @@
       <select id="user" name="user" onchange="display_bracket()">
         <option></option>
       </select>
-      <div id="user-info"> </div>
+      <div id="user-info">
+        <div id="user-info-points"></div>
+        <div id="user-info-position"></div>
+      </div>
     </div>
   </div>
+</div>
 </body>
 </html>
 

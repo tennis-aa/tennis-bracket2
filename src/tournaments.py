@@ -42,15 +42,13 @@ def bracket(year,tournament):
     if localtime < tourn["start_time"]:
         for i in brack:
             user = users[i["user_id"]]
-            brackets.update({user:[""]*tourn["bracketsize"]})
+            brackets.update({user: [-1]*tourn["bracketsize"]})
     else:
         for i in brack:
             user = users[i["user_id"]]
-            brackets.update({user:[tourn["players"][j] if j>=0 else "" for j in i["bracket"]]})
+            brackets.update({user: [j for j in i["bracket"]]})
 
     results_dict = tourn["results"]
-    results_dict['results'] = [tourn["players"][j] if j>=0 else "" for j in results_dict['results']]
-    results_dict['losers'] = [tourn["players"][j] for j in results_dict['losers']]
     results_dict['table_results']['user'] = [users[i] for i in results_dict['table_results']['user']]
     
     render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],'brackets':brackets,
@@ -81,7 +79,7 @@ def submit(year,tournament):
         if time_to_start.total_seconds() <= 0:
             time_to_start = timedelta()
         render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],
-            'elos':tourn["elos"],'bracket':[tourn["players"][j] if j>=0 else '' for j in bracket],
+            'elos':tourn["elos"],'bracket':bracket,
             'time_to_start':time_to_start}
 
         return bracketRender('submit',year,tournament,render_vars)
@@ -93,7 +91,7 @@ def submit(year,tournament):
         try:
             for i in range(tourn["bracketsize"]-1):
                 try:
-                    bracket[i] = tourn["players"].index(request.form['select{}'.format(tourn["bracketsize"]+i)])
+                    bracket[i] = int(request.form['select{}'.format(tourn["bracketsize"]+i)])
                 except:
                     pass
             if brack is None:
@@ -122,8 +120,9 @@ def table(year,tournament):
         users[i] = user["username"]
 
     tourn["results"]['table_results']['user'] = [users[i] for i in tourn["results"]['table_results']['user']]
-    render_vars = {'bracketSize':tourn["bracketsize"],'table_results':tourn["results"]['table_results']}
-    return bracketRender('table',year,tournament,render_vars)
+    render_vars = {'bracketSize': tourn["bracketsize"],'table_results': tourn["results"]['table_results'],
+        "year": year, "tournament": tournament}
+    return render_template("tournaments/TablePositions.jinja",**render_vars)
 
 
 
@@ -155,8 +154,6 @@ def bracketRender(render_type,year,tournament,render_vars):
         template_filename = 'tournaments/BracketDisplay.jinja'
     elif render_type=='submit':
         template_filename = 'tournaments/BracketFillout.jinja'
-    elif render_type=='table':
-        template_filename = 'tournaments/TablePositions.jinja'
 
     return render_template(template_filename,**render_vars)
 

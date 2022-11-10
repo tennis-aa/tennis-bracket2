@@ -4,7 +4,7 @@
   <title> {{ tournament }}  {{ year }} </title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" type="image/png" href="{{ url_for('static',filename='favicon.png') }}"/>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bracket.css') }}">
   <script type="application/javascript">
@@ -19,27 +19,27 @@
 
 </head>
 <body onLoad="loadFillout()">
-<div class="container">
-  {% include 'header.jinja' %}
-  <h2> {{ tournament }} {{ year}} </h2>
-  <nav class="navbar navbar-default border-primary">
-    <ul class = "nav navbar-nav">
-      <li><a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></li>
-      <li><a href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></li>
-      <li class="active"><a href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></li>
-    </ul>
-  </nav>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  <div>
-  {% if hours_to_start == 0 and minutes_to_start == 0 %}
-    El torneo ya ha iniciado y las inscripciones estan cerradas.
-  {% else %}
-    Las inscripciones cierran en {{ hours_to_start }} horas y {{ minutes_to_start }} minutos.
-  {% endif %}
+{% include 'header.jinja' %}
+<nav class="navbar navbar-expand-sm tournament">
+  <div class="tournament-name"> {{ tournament }} {{ year}} </div>
+  <div class = "navbar-nav">
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}"> Cuadros </a></div>
+    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}"> Tabla de posiciones </a></div>
+    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}"> Crear cuadro </a></div>
   </div>
-  <div class="bracket_container" style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ (rounds+1)*2 }}*var(--hspace));">
+</nav>
+{% for message in get_flashed_messages() %}
+<div class="flash">{{ message }}</div>
+{% endfor %}
+<div>
+{% if hours_to_start == 0 and minutes_to_start == 0 %}
+  El torneo ya ha iniciado y las inscripciones estan cerradas.
+{% else %}
+  Las inscripciones cierran en {{ hours_to_start }} horas y {{ minutes_to_start }} minutos.
+{% endif %}
+</div>
+<div class="container-bracket">
+  <div style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ rounds*2 + 1 }}*var(--hspace));">
     <form id="bracketForm" name="bracketForm" method="post">
     {% for j in range(rounds) %}
       {% for i in range((bracketSize/(2**j)) | int) %}
@@ -49,23 +49,23 @@
           {% endif %}
       <div class="player" id="p{{ counter[j] + i }}" style="position: absolute; left: calc({{ j }}*var(--hspace)); top: calc({{ i*(2**j) + (2**(j-1)-1/2) }} * var(--vspace))">
           {% if j>0 %} 
-        <select class="playerselect" id = "select{{ counter[j] + i }}" name="select{{ counter[j] + i }}" onchange="update_options({{ counter[j] + i }})">
+        <select class="playerselect" id = "select{{ counter[j] + i }}" name="select{{ counter[j] + i }}" onchange="update_selection({{ counter[j] + i }})">
+          <option></option>
+          <option></option>
           <option></option>
         </select>
           {% endif %}
       </div>
           {% if j>0 %}
-      <div class="mytooltipcontainer" style="position: absolute; left: calc({{ j+1 }}*var(--hspace) + 1px); top: calc({{ i*2**j + (2**(j-1))}} * var(--vspace))"> 
+      <div class="mytooltipcontainer" style="position: absolute; left: calc({{ j+1 }}*var(--hspace) + 1px); top: calc({{ i*2**j + (2**(j-1)-1/2) }} * var(--vspace) + var(--cellheight) - 1.5*var(--fontsize))"> 
         ? 
         <div class="mytooltip right" id="tip{{ counter[j] + i }}">
-          <table>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-          </table>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
         </div>
       </div>
           {% endif %}
@@ -75,23 +75,23 @@
           {% endif %}
       <div class="player" id="p{{ counter[j] + i }}" style="position: absolute; left: calc(var(--hspace) * {{ 2*rounds - j }}); top: calc({{ (i-bracketSize/(2**(j+1))) *(2**j) + (2**(j-1) - 1/2) }}*var(--vspace))"> 
           {% if j>0 %}
-        <select class="playerselect" id = "select{{ counter[j] + i }}" name ="select{{ counter[j] + i }}" onchange="update_options({{ counter[j] + i }})">
+        <select class="playerselect" id = "select{{ counter[j] + i }}" name ="select{{ counter[j] + i }}" onchange="update_selection({{ counter[j] + i }})">
+          <option></option>
+          <option></option>
           <option></option>
         </select>
           {% endif%}
       </div>
           {% if j>0 %}
-      <div class="mytooltipcontainer" style="position: absolute; left: calc(var(--hspace) * {{ 2*rounds - j - 0.15 }}); top: calc({{ (i-bracketSize/(2**(j+1)))*(2**j) + 2**(j-1)}} * var(--vspace))"> 
+      <div class="mytooltipcontainer" style="position: absolute; left: calc(var(--hspace) * {{ 2*rounds - j }} - 1.5*var(--fontsize)); top: calc({{ (i-bracketSize/(2**(j+1)))*(2**j) + (2**(j-1) - 1/2) }} * var(--vspace) + var(--cellheight) - 1.5*var(--fontsize))"> 
         ? 
         <div class="mytooltip left" id="tip{{ counter[j] + i }}">
-          <table>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-          </table>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
         </div>
       </div>
           {% endif %}
@@ -100,22 +100,22 @@
     {% endfor %}
       <div class="line" style="position: absolute; left: calc({{ rounds }} * var(--hspace)); top: calc( var(--vspace) * {{ 2**(rounds-2) - 2 }} + var(--cellheight) - var(--linewidth)); height: calc(1.5*var(--vspace) + var(--linewidth))"> </div>
       <div class="line" style="position: absolute; left: calc({{ rounds+1 }}*var(--hspace)); top:calc(var(--vspace)*{{ 2**(rounds-2) - 2 }} + var(--cellheight) - var(--linewidth)); height: calc(1.5*var(--vspace) + var(--linewidth))"> </div>
-      <div class="player" id="p{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top:calc(var(--vspace)*{{ 2**(rounds-2) - 2 }}); text-align: center"> 
+      <div class="player" id="p{{ counter[rounds] }}" style="position: absolute; left: calc({{ rounds }}*var(--hspace)); top: calc(var(--vspace)*{{ 2**(rounds-2) - 2 }}); text-align: center"> 
         <select class="playerselect" id = "select{{ counter[rounds] }}" name="select{{ counter[rounds] }}">
+          <option></option>
+          <option></option>
           <option></option>
         </select>
       </div>
-      <div class="mytooltipcontainer" style="position: absolute; left:calc({{ rounds + 1.01}} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 1.5 }}); text-align: center"> 
+      <div class="mytooltipcontainer" style="position: absolute; left:calc({{ rounds + 1.01}} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 2 }}  + var(--cellheight) - 1.5*var(--fontsize)); text-align: center"> 
         ? 
         <div class="mytooltip right" id="tip{{ counter[rounds] }}">
-          <table>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-            <tr>
-              <td></td> <td style="width: calc(2*var(--cellheight)); text-align: right"></td>
-            </tr>
-          </table>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
+          <div class="tiprow">
+            <div class="tipplayer"></div> <div class="tipprob"></div>
+          </div>
         </div>
       </div>
       <div id="userinfo-container" style="position: absolute; left: calc({{ rounds-1 }} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 5 }}); width: calc(3*var(--hspace)); height: var(--vspace); text-align: center"> 
@@ -123,6 +123,7 @@
       </div>
     </form>
   </div>
+</div>
 </body>
 </html>
 

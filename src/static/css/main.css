@@ -1,58 +1,90 @@
+/* color palette */
+:root {
+  --color1: #3D5A80;
+  --color2: #F4B942;
+  --color3: #972D07;
+  --color4: #1B998B;
+  --color5: #E54749;
+  --myblack: #151515;
+  --color1opaque: #3D5A80B0;
+}
+
 /* General */
-.navbar {
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--myblack);
+}
+
+/* Navigation bar header */
+.navbar.header {
+  background-color: var(--color1);
+}
+
+.navbar-brand {
+  color: white;
+}
+
+.navbar-brand:hover {
+  color: var(--color2);
+}
+
+.nav-link.header {
+  color: white;
+}
+
+.nav-link.header:hover {
+  color: var(--color2);
+}
+
+/* navigation bar for tournament */
+.navbar.tournament {
   background-color: white;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  border: 0px solid black;
-  border-radius: 0;
-  margin-bottom: 0;
-  font-size: 16pt;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
-.navbar-nav li a:hover {
-  text-decoration: underline;
+.tournament-name {
+  font-size: 26px;
+  color: var(--color1);
+  padding-right: 1rem;
 }
 
-.navbar-nav li.active a {
-  color: black !important;
-  background-color: #66b3ff !important;
+.nav-link.tournament {
+  color: var(--color1);
 }
 
-footer {
-  background-color: white;
-  padding-left: 5%;
+.nav-link.tournament.active {
+  color: white;
 }
 
-p, ul {
-  font-size: 14pt;
+.nav-link.tournament:hover {
+  color: var(--color3);
 }
 
-h1 a {
-  color: #66b3ff;
+.nav-item.active {
+  background-color: var(--color1);
+  border-radius: 0 0 5px 5px;
 }
 
-/* table of positions */
-#table-positions {
-  border-collapse: collapse;
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
+.nav-link.tournament.active:hover {
+  color: white;
 }
-#table-positions td {
-  font-size: 12pt;
+
+/* index */
+.container-year {
+  max-width: 200px;
+  border-radius: 10px;
 }
-#table-positions th {
-  font-size: 14pt;
-  color: Black;
-  background-color: white;
-  text-align: center;
+
+.tournament-link {
+  padding: 5px 5px;
+  margin: 5px 0;
+  border: 1px solid var(--color1);
+  color: var(--myblack);
+  border-radius: 5px;
 }
-#table-positions tr:nth-child(even) {
-  background-color: #cce6ff;
-}
-#table-positions tr:nth-child(odd) {
-  background-color: #66b3ff;
-}
-#table-positions a {
-  color: black;
+
+.tournament-link:hover {
+  background-color: var(--color2);
+  color: var(--myblack);
 }

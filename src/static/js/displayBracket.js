@@ -6,12 +6,12 @@
 let results;
 let scores;
 let losers;
-let table_results
+let table_results;
 // Put players in the bracket
 function loadDisplay() {
   for (let i = 0; i < players.length; i++) {
     let id = "p" + i;
-    document.getElementById(id).innerHTML = players[i];
+    document.getElementById(id).textContent = players[i];
   }
 
   let sel = document.getElementById("user");
@@ -29,7 +29,7 @@ function loadDisplay() {
   table_results = results_dict["table_results"];
   for (let i = 0; i < results.length; i++) {
     let id = "p" + (i+bracketSize);
-    document.getElementById(id).innerHTML = results[i];
+    document.getElementById(id).textContent = players[results[i]];
   }
 
   let params = new URLSearchParams(location.search);
@@ -39,44 +39,52 @@ function loadDisplay() {
 
 function display_bracket() {
   let user = document.getElementById("user").value;
-  let user_info = document.getElementById("user-info");
-  if (user==""){
-    user_info.innerHTML = "";
+  let user_info_points = document.getElementById("user-info-points");
+  let user_info_position = document.getElementById("user-info-position");
+  if (user=="") {
+    user_info_points.textContent = "";
+    user_info_position.textContent = "";
     for (let i = 0; i < bracketSize-1; i++) {
       let player = document.getElementById("p" + (i+bracketSize));
       let score = document.getElementById("score"+ (i+bracketSize));
       if (results) {
-        player.innerHTML = results[i];
+        player.textContent = players[results[i]];
       } else {
-        player.innerHTML = "";
+        player.textContent = "";
       }
-      player.style.color = "black";
+      player.style.color = "var(--myblack)";
       if (score && scores) {score.textContent = scores[i];}
     }
-  } else {
+  } 
+  else {
     let bracket = brackets[user];
-    if (table_results) {
-    let user_loc = table_results.user.findIndex(element=> element==user);
-    let nr_users = table_results.user.length;
-    user_info.innerHTML =  table_results.points[user_loc] + " puntos" + "<br>" + "Posicion " + table_results.position[user_loc] + "/" + nr_users + " (" + table_results.rank[user_loc] + ")";
+    let user_loc = table_results.user.findIndex(element => element==user);
+    if (user_loc != -1) {
+      let nr_users = table_results.user.length;
+      user_info_points.textContent = table_results.points[user_loc] + " puntos"; 
+      user_info_position.textContent = "Posicion " + table_results.position[user_loc] + "/" + nr_users + " (" + table_results.rank[user_loc] + ")";
+    }
+    else {
+      user_info_points.textContent = ""; 
+      user_info_position.textContent = "";
     }
     for (let i = 0; i < bracket.length; i++) {
       let player = document.getElementById("p" + (i+bracketSize));
       let score = document.getElementById("score"+ (i+bracketSize));
-      player.innerHTML = bracket[i];
-      if (score) score.innerHTML = "";
+      player.textContent = players[bracket[i]];
+      if (score) score.textContent = "";
       if (!results) {
-        player.style.color = "black";
+        player.style.color = "var(--myblack)";
         continue;
       }
       if (i<bracketSize/2 && (players[2*i]=="Bye" || players[2*i+1]=="Bye")) {
-        player.style.color = "black";
-      } else if (results[i]!="" && bracket[i]==results[i]) {
-        player.style.color = "green";
+        player.style.color = "var(--myblack)";
+      } else if (results[i]!=-1 && bracket[i]==results[i]) {
+        player.style.color = "var(--color4)";
       } else if (losers.includes(bracket[i])){
-        player.style.color = "red";
+        player.style.color = "var(--color5)";
       } else {
-        player.style.color = "black";
+        player.style.color = "var(--myblack)";
       }
     }
   }

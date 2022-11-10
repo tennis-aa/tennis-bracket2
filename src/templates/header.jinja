@@ -1,31 +1,17 @@
-<nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="{{ url_for('index') }}" style="font-size:24px"> Cuadros </a>
-    </div>
-    <ul class="nav navbar-nav">
-      {% if g.user %}
-      <li><a href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></li>
-        {% if g.user.user_id <= 4 %}
-      <li><a href="{{ url_for('update.index') }}">Administrar</a></li>
-        {% endif %}
-      <li><a href="{{ url_for('auth.logout') }}">Cerrar sesion</a></li>
-      {% else %}
-      <li><a href="{{ url_for('auth.login') }}">Iniciar sesion</a></li>
+<nav class="navbar navbar-expand-sm header">
+  <a class="navbar-brand" href="{{ url_for('index') }}"> 
+    <img alt="tenis" type="image/png" style="width:30px; height:30px" src="{{ url_for('static', filename='favicon.png') }}">
+    Torneos
+  </a>
+  <div class="navbar-nav">
+    {% if g.user %}
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></div>
+      {% if g.user.user_id <= 4 %}
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('update.index') }}">Administrar</a></div>
       {% endif %}
-    </ul>
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.logout') }}">Cerrar sesion</a></div>
+    {% else %}
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.login') }}">Iniciar sesion</a></div>
+    {% endif %}
   </div>
 </nav>
-
-{# <nav  class="navbar navbar-default border-primary">
-  <ul  class = "nav navbar-nav">
-    <li><h1><a href="{{ url_for('index') }}">Cuadromania</a></h1></li>
-    {% if g.user %}
-    <li> {{ g.user['username'] }} </li>
-    <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
-    {% else %}
-    <li><a href="{{ url_for('auth.register') }}">Register</a></li>
-    <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
-    {% endif %}
-  </ul>
-</nav> #}

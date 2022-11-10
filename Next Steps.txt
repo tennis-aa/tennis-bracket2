@@ -1,9 +1,8 @@
 - interface to create a new tournament
 	- try catch potential mistakes in inputs
-- Some elo helpers are malfunctioning
-- 
+- make an english version with users selecting their preferred language
+- make website prettier
+	- Make tournaments a table showing the leader
+- create interface to create new users
 
-- schedule updates
-- elo perform much better than the median robot. Why? Can we adapt the strategy of the robot?
-- there is a way to install chromium on the heroku app, maybe also geckodriver
 - use utr as an alternative to elo?

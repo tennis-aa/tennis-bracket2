@@ -1,0 +1,9 @@
+
+#table-positions {
+  max-width: 900px;
+}
+
+#table-positions thead {
+  background-color: var(--color1);
+  color: white;
+}
