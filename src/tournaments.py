@@ -86,7 +86,7 @@ def submit(year,tournament):
     elif request.method == 'POST':
         # The client side does not allow to make changes after begin of tournament, so the following if-block should never be reached
         if time_to_start.total_seconds() <= 0:
-            flash('Las inscripciones estan cerradas.')
+            flash('Las inscripciones estan cerradas.' if g.user["language"] == "spanish" else "Sign up is closed")
             return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
         try:
             for i in range(tourn["bracketsize"]-1):
@@ -96,12 +96,12 @@ def submit(year,tournament):
                     pass
             if brack is None:
                 dbfirestore.add_bracket(g.user["user_id"],tourn["tournament_id"],bracket)
-                flash('Su cuadro ha sido creado exitosamente.')
+                flash('Su cuadro ha sido creado exitosamente' if g.user["language"] == "spanish" else 'Your entry has been created successfully')
             else:
                 dbfirestore.update_bracket(brack["bracket_id"], {"bracket" : bracket})
-                flash('Su cuadro ha sido actualizado exitosamente.')
+                flash('Su cuadro ha sido actualizado exitosamente' if g.user["language"] == "spanish" else 'Your bracket has been updated successfully')
         except:
-            flash("Hubo un error guradando su cuadro. Contacte al administrador.")
+            flash("Hubo un error guradando su cuadro. Contacte al administrador." if g.user["language"] == "spanish" else 'There was an error saving your bracket. Contact the maintainer.')
         return redirect(url_for("tournaments.submit",year=year,tournament=tournament))
     else:
         return redirect(url_for('index'))

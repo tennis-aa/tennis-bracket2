@@ -14,30 +14,29 @@
     <div class="flash">{{ message }}</div>
   {% endfor %}
     <div>
-      <form method="post" onsubmit="return confirm('Esta seguro que quiere cambiar su nombre de usuario?');">
+      <form method="post" onsubmit="return confirm({% if g.user.language == 'spanish' %} 'Esta de seguro que quiere cambiar el nombre de usuario?' {% else %} 'Are you sure you want to change the username?' {% endif %});">
         <label for="username"> 
           {% if g.user.language == "spanish" %} Nuevo nombre de usuario {% else %} New username {% endif %}
         </label>
         <input name="username" id="username" required>
-        <input type="submit" name="btn" value="Cambiar nombre de usuario">
+        <input type="submit" name="btn" value="{% if g.user.language == 'spanish' %} Cambiar nombre de usuario {% else %} Change username {% endif %}">
       </form>
     </div>
     <div>
-      <form method="post" name="password_change" onsubmit="return confirm('Esta seguro que quiere cambiar la contraseña?');">
+      <form method="post" name="password_change" onsubmit="return confirm({% if g.user.language == 'spanish' %} 'Esta seguro que quiere cambiar la contraseña?' {% else %} 'Are you sure you want to change the password?' {% endif %});">
         <label for="password"> 
           {% if g.user.language == "spanish" %} Nueva contraseña {% else %} New password {% endif %}
         </label>
         <input type="password" name="password" id="password" required>
-        <br>
         <label for="password2"> 
           {% if g.user.language == "spanish" %} Reingrese la contraseña {% else %} Reenter password {% endif %}
         </label>
         <input type="password" name="password2" id="password2" required>
-        <input type="submit" name="btn" value="Cambiar contraseña">
+        <input type="submit" name="btn" value="{% if g.user.language == 'spanish' %} Cambiar contraseña {% else %} Change password {% endif %}">
       </form>
     </div>
     <div>
-      <form method="post" onsubmit="return confirm('Esta seguro que quiere cambiar su idioma?');">
+      <form method="post" onsubmit="return confirm({% if g.user.language == 'spanish' %} 'Esta seguro que quiere cambiar el idioma?' {% else %} 'Are you sure you want to change the preferred language?' {% endif %});">
         <label for="language">
           {% if g.user.language == "spanish" %} Idioma {% else %} Language {% endif %}
         </label>
@@ -45,7 +44,7 @@
           <option value="spanish" {% if g.user.language == "spanish" %} selected {% endif %}> Español </option>
           <option value="english" {% if g.user.language == "english" %} selected {% endif %}> English </option>
         </select>
-        <input type="submit" name="btn" value="Cambiar idioma">
+        <input type="submit" name="btn" value="{% if g.user.language == 'spanish' %} Cambiar idioma {% else %} Change language {% endif %}">
       </form>
     </div>
   </div>

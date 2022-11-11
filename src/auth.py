@@ -63,34 +63,34 @@ def profile():
         if "username" in request.form:
             username = request.form['username']
             docs = dbfirestore.db.collection("users").stream()
-            usernames = [i["username"] for i in docs]
+            usernames = [i.to_dict()["username"] for i in docs if i.id != "usercount"]
             if username is None:
-                message = 'Ingrese el nuevo usuario'
+                message = 'Ingrese el nuevo nombre de usuario' if g.user["language"] == "spanish" else "Enter new username"
             elif username in usernames:
-                message = 'El nombre de usuario ' + username + ' ya existe.'
+                message = ('El nombre de usuario ' + username + ' ya existe.') if g.user["language"] == "spanish" else ('The username ' + username + ' already exists')
             else:
                 g.user["username"] = username
                 dbfirestore.update_user(g.user["user_id"],username)
-                message = 'Su nuevo nombre de usuario es ' + username
+                message = ('Su nuevo nombre de usuario es ' + username) if g.user["language"] == "spanish" else ('Your new username is ' + username)
         elif "password" in request.form:
             password = request.form['password']
             password2 = request.form['password2']
             if (password != password2) or (password is None):
-                message = 'Error: ingrese la misma contraseña.'
+                message = 'Error: ingrese la misma contraseña.' if g.user["language"] == "spanish" else 'Error: enter the same password'
             else:
                 g.user["password"] = generate_password_hash(password)
                 dbfirestore.update_user(g.user["user_id"],password=g.user["password"])
-                message = 'Su contraseña ha sido actualizada.'
+                message = 'Su contraseña ha sido actualizada' if g.user["language"] == "spanish" else 'Your password has been updated'
         elif "language" in request.form:
             language = request.form['language']
             if language in ["spanish","english"]:
                 g.user["language"] = language
                 dbfirestore.update_user(g.user["user_id"],language=language)
-                message = 'Su idioma ha sido actualizado'
+                message = 'Su idioma ha sido actualizado' if g.user["language"] == "spanish" else 'Your language has been updated'
             else:
-                message = "Idioma no disponible"
+                message = "Idioma no disponible" if g.user["language"] == "spanish" else 'Language not supported'
         else:
-            message = "Error enviando la informacion al servidor"
+            message = "Error enviando la informacion al servidor" if g.user["language"] == "spanish" else "Error sending information to server"
 
         flash(message)
     return render_template('auth/profile.jinja')

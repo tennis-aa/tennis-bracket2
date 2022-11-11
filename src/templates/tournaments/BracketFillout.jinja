@@ -33,17 +33,22 @@
     </a></div>
   </div>
 </nav>
-{% for message in get_flashed_messages() %}
-<div class="flash">{{ message }}</div>
-{% endfor %}
-<div>
-{% if hours_to_start == 0 and minutes_to_start == 0 %}
-  El torneo ya ha iniciado y las inscripciones estan cerradas.
-{% else %}
-  Las inscripciones cierran en {{ hours_to_start }} horas y {{ minutes_to_start }} minutos.
-{% endif %}
-</div>
 <div class="container-bracket">
+  {% for message in get_flashed_messages() %}
+  <div class="flash">{{ message }}</div>
+  {% endfor %}
+  <div>
+  {% if hours_to_start == 0 and minutes_to_start == 0 %}
+    {% if g.user["language"] == "spanish" %} El torneo ya ha iniciado y las inscripciones estan cerradas. {% else %} The tournament has started and signups are closed {% endif %}
+  {% else %}
+    {% if g.user["language"] == "spanish" %}
+      Las inscripciones cierran en {{ hours_to_start }} horas y {{ minutes_to_start }} minutos.
+    {% else %}
+      Signups close in {{ hours_to_start }} hours and {{ minutes_to_start }} minutes.
+    {% endif %}
+  {% endif %}
+  </div>
+
   <div style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ rounds*2 + 1 }}*var(--hspace));">
     <form id="bracketForm" name="bracketForm" method="post">
     {% for j in range(rounds) %}
@@ -124,7 +129,8 @@
         </div>
       </div>
       <div id="userinfo-container" style="position: absolute; left: calc({{ rounds-1 }} * var(--hspace)); top: calc(var(--vspace) * {{ 2**(rounds-2) - 5 }}); width: calc(3*var(--hspace)); height: var(--vspace); text-align: center"> 
-        <input type="submit" value="Guardar" {% if hours_to_start == 0 and minutes_to_start == 0 %} disabled {% endif %}}>
+        <input type="submit" value="{% if g.user['language'] == 'spanish' %} Guardar {% else %} Save {% endif %}"
+        {% if hours_to_start == 0 and minutes_to_start == 0 %} disabled {% endif %}}>
       </div>
     </form>
   </div>

@@ -1,20 +1,22 @@
 <nav class="navbar navbar-expand-sm header">
   <a class="navbar-brand" href="{{ url_for('index') }}"> 
     <img alt="tenis" type="image/png" style="width:30px; height:30px" src="{{ url_for('static', filename='favicon.png') }}">
-    {% if not g.user or elif g.user.language == "spanish" %} Torneos {% else %} Events {% endif %}
+    {% if not g.user or g.user.language == "spanish" %} Torneos {% else %} Tournaments {% endif %}
   </a>
   <div class="navbar-nav">
     {% if g.user %}
     <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></div>
       {% if g.user.user_id <= 4 %}
-    <div class="nav-item"><a class="nav-link header" href="{{ url_for('update.index') }}">Administrar</a></div>
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('update.index') }}">
+      {% if g.user.language == "spanish" %} Administrar {% else %} Admin {% endif %}
+    </a></div>
       {% endif %}
     <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.logout') }}">
       {% if g.user.language == "spanish" %} Cerrar sesion {% else %} Logout {% endif %}
     </a></div>
     {% else %}
     <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.login') }}">
-      Iniciar sesion/Login
+      Iniciar sesion / Login
     </a></div>
     {% endif %}
   </div>
