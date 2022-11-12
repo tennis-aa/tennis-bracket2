@@ -97,9 +97,9 @@ def generateBots(elo,n,sets=3,points_per_round=[1,2,3,5,7,10,15],prob_modifier=l
 
     return bots
 
-def generateElo(players,elo):
+def generateElo(elo):
     # helper variables
-    bracketSize = len(players)
+    bracketSize = len(elo)
     rounds = math.log(bracketSize,2)
     if not rounds.is_integer():
         raise ValueError("bracketSize has to be 2^n")
@@ -113,11 +113,11 @@ def generateElo(players,elo):
     bracket = []
     bracket_elo = []
     for i in range(int(bracketSize/2)):
-        if players[2*i]=="Bye":
+        if elo[2*i]==0:
             bracket.append(2*i+1)
             bracket_elo.append(elo[2*i+1])
             continue
-        elif players[2*i+1]=="Bye":
+        elif elo[2*i+1]==0:
             bracket.append(2*i)
             bracket_elo.append(elo[2*i])
             continue

@@ -1,7 +1,5 @@
 import requests
 import bs4
-import os
-import json
 import re
 from statistics import quantiles
 from .bracket2elo import exceptions

@@ -55,6 +55,12 @@
       </tbody>
     </table>
   </div>
+  {% if "elo_points" in table_results %}
+  <div> {% if g.user.language == "spanish" %} Puntos usando Elo {% else %} Points using Elo ratings {% endif %} {{ table_results["elo_points"] }} </div>
+  {% endif %}
+  {% if "utr_points" in table_results %}
+  <div> {% if g.user.language == "spanish" %} Puntos usando Universal Tennis Rating {% else %} Points using Universal Tennis Rating {% endif %} {{ table_results["utr_points"] }} </div>
+  {% endif %}
 </div>
 </body>
 </html>

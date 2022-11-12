@@ -60,15 +60,20 @@
         Los indices de los jugadores resaltados en rojo no estan en la tabla de tennisabstract o varias posibilidades fueron encontradas.
         A estos jugadores se les asigno un indice de 1650 pero deben ser ingresados manualmente.
       </p>
+      <p>
+        El <a href="https://universaltennis.com/ptt-rankings">Universal Tennis Rating</a> es un ranking que usa un sistema similar a elo.
+      </p>
       <table>
         <tr>
           <th> Jugador </th>
           <th> Indice Elo </th>
+          <th> Universal Tennis Rating </th>
         </tr>
         {% for i in range(b.players|length) %}
         <tr>
           <td {% if b.elo[i] == 1650 %} style="background-color:red" {% endif %}> {{ b.players[i] }} </td>
-          <td> <input type="number" value="{{ b.elo[i] }}" name="elo{{i}}"> </td>
+          <td> <input type="number" step="0.1" value="{{ b.elo[i] }}" name="elo{{i}}"> </td>
+          <td {% if b.utr[i] == 14 %} style="color:red" {% endif %}> <input type="number" step="0.01" value="{{ b.utr[i] }}" name="utr{{i}}"> </td>
         {% endfor %}
         </tr>
       </table>

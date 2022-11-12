@@ -3,18 +3,20 @@ import math
 import json
 import copy
 from random import random
-from . import playerScrape 
+from . import playerScrape
 from . import eloScrape
+from . import utrScrape
 from . import basicBrackets
 from datetime import datetime
 
 class Bracket:
-    def __init__(self,players=[],elo=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},
+    def __init__(self,players=[],elo=[],utr=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},
                 brackets={},tournament="",year=0,path="",points_per_round=[1,2,3,5,7,10,15],atplink="",surface="all",
                 start_time=datetime(2021,1,1,0,0,0,0),end_time=datetime(2021,1,1,0,0,0,0)):
         self.players = players
         self.bracketSize = len(players)
         self.elo = elo
+        self.utr = utr
         self.sets = sets
         self.results = results
         self.scores = scores
@@ -159,8 +161,19 @@ class Bracket:
             self.elo[self.players.index(player)] = elo
         return
 
+    def updateUTR(self,player=None,utr=None):
+        if player==None or utr==None:
+            utrs = utrScrape.utrScrape(self.players)
+            self.utr = utrs
+        else:
+            self.elo[self.players.index(player)] = utr
+        return
+
     def Elobracket(self):
-        return basicBrackets.generateElo(self.players, self.elo)
+        return basicBrackets.generateElo(self.elo)
+
+    def UTRbracket(self):
+        return basicBrackets.generateElo(self.utr)
 
     def updateBrackets(self,user,bracket):
         self.brackets[user] = bracket
@@ -204,7 +217,7 @@ class Bracket:
         self.losers = losers
 
         # Define the object that contains the standings
-        table_results = {"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[]}
+        table_results = {"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"elo_points":0,"utr_points":0}
         # compute points and positions for all participants
         entries = []
         for key in self.brackets:
@@ -282,6 +295,13 @@ class Bracket:
 
         self.results = results # change results back to the true results
         table_results["prob_winning"] = prob_winning
+
+        # Compute points of elo and utr
+        if (len(self.elo) != 0):
+            table_results["elo_points"] = self.computePoints(self.Elobracket())
+
+        if (len(self.utr) != 0):
+            table_results["utr_points"] = self.computePoints(self.UTRbracket())
 
         self.table_results = table_results
         return

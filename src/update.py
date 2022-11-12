@@ -52,6 +52,7 @@ def tournament(year,tournament):
         b.end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M').replace(tzinfo=tzlocal)
         b.points_per_round = [int(request.form['points_per_round'+str(i)]) for i in range(b.rounds)]
         b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
+        b.utr = [float(request.form['utr'+str(i)]) for i in range(len(b.players))]
 
         try:
             updated_players = b.updatePlayers()
@@ -62,6 +63,7 @@ def tournament(year,tournament):
         # try:
         if updated_players:
             b.updateElo()
+            b.updateUTR()
         b.brackets[5] = b.Elobracket()
         elobrack = dbfirestore.db.collection("brackets").where("tournament_id","==",tourn["tournament_id"]).where("user_id","==",5).get()
         if len(elobrack) == 1:
@@ -76,6 +78,8 @@ def tournament(year,tournament):
         #     flash('Error actualizando el cuadro.')
         return redirect(url_for('update.tournament',year=year,tournament=tournament))
 
+    if len(b.utr) == 0:
+        b.utr = [0]*b.bracketSize
     return render_template('update/tournament.jinja', b=b, start_time = start_time, end_time = end_time, tz = tz)
 
 @bp.route('/newtournament',methods=('GET','POST'))
@@ -88,6 +92,7 @@ def newtournament():
         # try:
         atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
         elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
+        utrs = pybracket.utrScrape(atpinfo['players'])
         start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
         end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
         tz = timezone(timedelta(hours=int(request.form["timezone"])))
@@ -97,7 +102,7 @@ def newtournament():
         results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]}}
         dbfirestore.add_tournament(request.form['name'],int(request.form['year']),start_time,end_time,[1,2,3,5,7,10,15],
             request.form['atplink'],bracketsize,request.form['surface'],int(request.form['sets']),
-            atpinfo['players'],elos,results_dict)
+            atpinfo['players'],elos,utrs,results_dict)
         return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
         # except:
         #     flash("No se pudo crear el cuadro.")
@@ -140,6 +145,7 @@ def db2bracket(tourn,brack):
         brackets.update({bracket["user_id"] : bracket["bracket"]})
     b = pybracket.Bracket(players=tourn["players"],
                           elo=tourn["elos"],
+                          utr=tourn["utrs"] if "utrs" in tourn else [],
                           sets=tourn["sets"],
                           results=tourn["results"]['results'],
                           scores=tourn["results"]['scores'],
@@ -166,5 +172,6 @@ def bracket2tourn(b,tourn):
     tourn["sets"] = b.sets
     tourn["players"] = b.players
     tourn["elos"] = b.elo
+    tourn["utrs"] = b.utr
     tourn["results"] = {"results":b.results,"scores":b.scores,"losers":b.losers,"table_results":b.table_results}
     return

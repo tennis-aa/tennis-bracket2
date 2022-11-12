@@ -1,7 +1,4 @@
 - interface to create a new tournament
 	- try catch potential mistakes in inputs
-- make an english version with users selecting their preferred language
 - make website prettier
 	- Make tournaments a table showing the leader
-
-- use utr as an alternative to elo?

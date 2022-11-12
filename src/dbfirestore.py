@@ -40,7 +40,7 @@ def update_user(id,username=None,password=None,language=None):
         return False
 
 def add_tournament(name,year,start_time,end_time,points_per_round,atplink,
-        bracketsize,surface,sets,players,elos,results):
+        bracketsize,surface,sets,players,elos,utrs,results):
     coll = db.collection("tournaments")
     doc_tournamentcount = coll.document("tournamentcount")
     tournamentcount = doc_tournamentcount.get().to_dict()["count"]
@@ -60,6 +60,7 @@ def add_tournament(name,year,start_time,end_time,points_per_round,atplink,
         "sets" : sets,
         "players" : players,
         "elos" : elos,
+        "utrs" : utrs,
         "results" : results
     }
     doc_tournament = coll.document(str(tournamentcount))
@@ -82,6 +83,7 @@ def update_tournament(data):
                 "sets",
                 "players",
                 "elos",
+                "utrs",
                 "results"]:
             print(key, " is not in tournament data")
             return False
