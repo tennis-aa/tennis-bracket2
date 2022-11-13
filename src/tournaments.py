@@ -79,8 +79,7 @@ def submit(year,tournament):
         if time_to_start.total_seconds() <= 0:
             time_to_start = timedelta()
         render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],
-            'elos':tourn["elos"],'bracket':bracket,
-            'time_to_start':time_to_start}
+            'elos':tourn["elos"],'bracket':bracket, 'time_to_start':time_to_start}
 
         return bracketRender('submit',year,tournament,render_vars)
     elif request.method == 'POST':
@@ -120,8 +119,13 @@ def table(year,tournament):
         users[i] = user["username"]
 
     tourn["results"]['table_results']['user'] = [users[i] for i in tourn["results"]['table_results']['user']]
+
+    tzlocal = datetime.utcnow().astimezone().tzinfo
+    localtime = datetime.now(tzlocal)
+    time_to_start = tourn["start_time"] - localtime
+
     render_vars = {'bracketSize': tourn["bracketsize"],'table_results': tourn["results"]['table_results'],
-        "year": year, "tournament": tournament}
+        "year": year, "tournament": tournament, "seconds_to_start": time_to_start.total_seconds()}
     return render_template("tournaments/TablePositions.jinja",**render_vars)
 
 

@@ -93,16 +93,17 @@ def newtournament():
         atpinfo = pybracket.ATPdrawScrape(request.form['atplink'])
         elos = pybracket.eloScrape(atpinfo['players'], request.form['surface'])
         utrs = pybracket.utrScrape(atpinfo['players'])
+        rankings = atpinfo["ranking"]
         start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
         end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
         tz = timezone(timedelta(hours=int(request.form["timezone"])))
         start_time = start_time.replace(tzinfo=tz)
         end_time = end_time.replace(tzinfo=tz)
         bracketsize = len(atpinfo['players'])
-        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]}}
+        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}}
         dbfirestore.add_tournament(request.form['name'],int(request.form['year']),start_time,end_time,[1,2,3,5,7,10,15],
             request.form['atplink'],bracketsize,request.form['surface'],int(request.form['sets']),
-            atpinfo['players'],elos,utrs,results_dict)
+            atpinfo['players'],elos,utrs,rankings,results_dict)
         return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
         # except:
         #     flash("No se pudo crear el cuadro.")
@@ -146,6 +147,7 @@ def db2bracket(tourn,brack):
     b = pybracket.Bracket(players=tourn["players"],
                           elo=tourn["elos"],
                           utr=tourn["utrs"] if "utrs" in tourn else [],
+                          ranking=tourn["rankings"] if "rankings" in tourn else [],
                           sets=tourn["sets"],
                           results=tourn["results"]['results'],
                           scores=tourn["results"]['scores'],
@@ -173,5 +175,6 @@ def bracket2tourn(b,tourn):
     tourn["players"] = b.players
     tourn["elos"] = b.elo
     tourn["utrs"] = b.utr
+    tourn["rankings"] = b.ranking
     tourn["results"] = {"results":b.results,"scores":b.scores,"losers":b.losers,"table_results":b.table_results}
     return

@@ -10,11 +10,12 @@ from . import basicBrackets
 from datetime import datetime
 
 class Bracket:
-    def __init__(self,players=[],elo=[],utr=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},
+    def __init__(self,players=[],ranking=[],elo=[],utr=[],sets=3,results=[],scores=[],losers=[],table_results={"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[]},
                 brackets={},tournament="",year=0,path="",points_per_round=[1,2,3,5,7,10,15],atplink="",surface="all",
                 start_time=datetime(2021,1,1,0,0,0,0),end_time=datetime(2021,1,1,0,0,0,0)):
         self.players = players
         self.bracketSize = len(players)
+        self.ranking = ranking
         self.elo = elo
         self.utr = utr
         self.sets = sets
@@ -65,6 +66,8 @@ class Bracket:
             players_json = json.load(f)
         self.players = players_json["players"]
         self.elo = players_json["elo"]
+        self.utr = players_json["utr"] if "utr" in players_json else []
+        self.ranking = players_json["ranking"] if "ranking" in players_json else []
         if len(self.players) != self.bracketSize:
             print("Warning: the number of players and the bracketSize do not match.")
 
@@ -144,8 +147,8 @@ class Bracket:
             # if change != "y" and change != "yes":
             #     raise Exception("You will not be able to update results if there are conflicts between the bracket files and the ATP website.")
 
-            # players.json
             self.players = players
+            self.ranking = ATPData["ranking"]
 
             print("You can run method Bracket.updateElo() to update the elo ratings.")
             return True
@@ -174,6 +177,9 @@ class Bracket:
 
     def UTRbracket(self):
         return basicBrackets.generateElo(self.utr)
+
+    def rankingBracket(self):
+        return basicBrackets.generateElo([-i for i in self.ranking])
 
     def updateBrackets(self,user,bracket):
         self.brackets[user] = bracket
@@ -217,7 +223,7 @@ class Bracket:
         self.losers = losers
 
         # Define the object that contains the standings
-        table_results = {"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"elo_points":0,"utr_points":0}
+        table_results = {"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}
         # compute points and positions for all participants
         entries = []
         for key in self.brackets:
@@ -296,12 +302,15 @@ class Bracket:
         self.results = results # change results back to the true results
         table_results["prob_winning"] = prob_winning
 
-        # Compute points of elo and utr
+        # Compute points of elo, utr, and ranking
         if (len(self.elo) != 0):
             table_results["elo_points"] = self.computePoints(self.Elobracket())
 
         if (len(self.utr) != 0):
             table_results["utr_points"] = self.computePoints(self.UTRbracket())
+
+        if (len(self.ranking) != 0):
+            table_results["ranking_points"] = self.computePoints(self.rankingBracket())
 
         self.table_results = table_results
         return
@@ -314,8 +323,8 @@ class Bracket:
         return monkey_points
 
     def bot_points(self,n):
-        c0 = 15
-        c1 = 4
+        c0 = 2
+        c1 = 2
         def probability_modifier(probability,bracketSize,round,points_per_round):
             c = 1 + c0 *(1 - ((round-1)/(self.rounds - 1))**c1)
             return 1 - (2*(1-probability))**c/2
@@ -389,7 +398,7 @@ class Bracket:
         with open(os.path.join(self.path, "config.json"),"w", encoding="utf-8") as f:
             f.write(json.dumps({"tournament":self.tournament,"points_per_round": self.points_per_round,"atplink":self.atplink,"bracketSize":self.bracketSize,"surface":self.surface,"sets":self.sets},indent=4))
         with open(os.path.join(self.path, "players.json"),"w", encoding="utf-8") as f:
-            f.write(json.dumps({"players": self.players, "elo": self.elo}))
+            f.write(json.dumps({"players": self.players, "elo": self.elo, "utr":self.utr, "ranking":self.ranking}))
         with open(os.path.join(self.path, "brackets.json"),"w", encoding="utf-8") as f:
             f.write(json.dumps(self.brackets))
         with open(os.path.join(self.path, "results.json"),"w", encoding="utf-8") as f:

@@ -27,7 +27,7 @@ function loadFillout() {
     else if (players[2*i+1]=="Bye") {
       autowinner = 2*i;
     }
-    if (autowinner) {
+    if (autowinner != null) {
       sel.replaceChildren();
       let opt = document.createElement("option");
       opt.value = autowinner;

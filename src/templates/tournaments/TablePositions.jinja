@@ -26,6 +26,7 @@
 </nav>
 <div class="container-fluid">
   <div id="table-container">
+  {% if seconds_to_start < 0 %}
     <table class="table table-sm table-striped table-hover table-bordered" id="table-positions">
       <thead>
         <tr>
@@ -54,13 +55,19 @@
       {% endfor %}
       </tbody>
     </table>
-  </div>
-  {% if "elo_points" in table_results %}
+    {% if "elo_points" in table_results %}
   <div> {% if g.user.language == "spanish" %} Puntos usando Elo {% else %} Points using Elo ratings {% endif %} {{ table_results["elo_points"] }} </div>
-  {% endif %}
-  {% if "utr_points" in table_results %}
+    {% endif %}
+    {% if "utr_points" in table_results %}
   <div> {% if g.user.language == "spanish" %} Puntos usando Universal Tennis Rating {% else %} Points using Universal Tennis Rating {% endif %} {{ table_results["utr_points"] }} </div>
+    {% endif %}
+    {% if "ranking_points" in table_results %}
+  <div> {% if g.user.language == "spanish" %} Puntos usando el ranking ATP {% else %} Points using the ATP ranking {% endif %} {{ table_results["ranking_points"] }} </div>
+    {% endif %}
+  {% else %}
+    {% if g.user.language == "spanish" %} La tabla de posiciones sera actualizada cuando el torneo haya iniciado. {% else %} The standings will be updated when the tournament starts. {% endif %}
   {% endif %}
+  </div>
 </div>
 </body>
 </html>

@@ -28,8 +28,10 @@ function loadDisplay() {
   losers = results_dict["losers"];
   table_results = results_dict["table_results"];
   for (let i = 0; i < results.length; i++) {
-    let id = "p" + (i+bracketSize);
-    document.getElementById(id).textContent = players[results[i]];
+    if (results[i] != -1) {
+      let id = "p" + (i+bracketSize);
+      document.getElementById(id).textContent = players[results[i]];
+    }
   }
 
   let params = new URLSearchParams(location.search);
