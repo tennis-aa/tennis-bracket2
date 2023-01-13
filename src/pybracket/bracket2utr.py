@@ -22,5 +22,10 @@ exceptions = {
     "C O'Connell":"Christopher O'connell",
     "P Cuevas":"Pablo Cuevas",
     "T van Rijthoven":"Tim Van Rijthoven",
-    "Y Wu":"Yibing Wu"
+    "Y Wu":"Yibing Wu",
+    "M MacDonald": "Mackenzie Macdonald",
+    "L van Assche": "Luca Van Assche",
+    "L Van Assche": "Luca Van Assche",
+    "M Bellucci": "Mattia Bellucci",
+    "H Dellien": "Hugo Dellien"
 }

@@ -6,13 +6,13 @@ from .bracket2utr import exceptions
 
 def utrScrape(players):
     # There is an api so we do not need to scrape
-    utr_data = requests.get("https://api.universaltennis.com/v3/player/top?gender=M&tags=Pro&count=500&skip=0")
+    utr_data = requests.get("https://api.universaltennis.com/pts/player/top?gender=m&top=500&skip=0")
     utr_data = json.loads(utr_data.text)
     Player = []
     UTR = []
     for player in utr_data:
         Player.append(player["displayName"])
-        UTR.append(player["utr"])
+        UTR.append(player["singlesUtr"])
     utrs = [14.0]*len(players)
     utrs_found = []
     conflicts = []
