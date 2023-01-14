@@ -14,12 +14,13 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        error = None
         docs = dbfirestore.db.collection("users").where("username","==",username).stream()
+        user = None
         for doc in docs:
             user = doc.to_dict()
             break # only one user should be found anyway. we return the first
 
+        error = None
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user["password"], password):
