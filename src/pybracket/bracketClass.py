@@ -169,7 +169,7 @@ class Bracket:
             utrs = utrScrape.utrScrape(self.players)
             self.utr = utrs
         else:
-            self.elo[self.players.index(player)] = utr
+            self.utr[self.players.index(player)] = utr
         return
 
     def Elobracket(self):

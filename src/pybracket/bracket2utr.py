@@ -23,9 +23,9 @@ exceptions = {
     "P Cuevas":"Pablo Cuevas",
     "T van Rijthoven":"Tim Van Rijthoven",
     "Y Wu":"Yibing Wu",
-    "M MacDonald": "Mackenzie Macdonald",
-    "L van Assche": "Luca Van Assche",
-    "L Van Assche": "Luca Van Assche",
+    "L van Assche": "Luca Van Assche",
+    "L Van Assche": "Luca Van Assche",
     "M Bellucci": "Mattia Bellucci",
-    "H Dellien": "Hugo Dellien"
+    "H Dellien": "Hugo Dellien",
+    "M McDonald": "Mackenzie Mcdonald"
 }
