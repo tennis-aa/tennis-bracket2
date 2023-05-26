@@ -25,11 +25,11 @@ def eloScrape(players,surface):
         col = row.find_all('td')
         Rank.append(int(col[0].text))
         Player.append(col[1].text.replace("\xa0"," "))
-        Age.append(float(col[2].text))
-        Elo.append(float(col[3].text))
-        EloHard.append(float(col[9].text))
-        EloClay.append(float(col[10].text))
-        EloGrass.append(float(col[11].text))
+        Age.append(float_or_zero(col[2].text))
+        Elo.append(float_or_zero(col[3].text))
+        EloHard.append(float_or_zero(col[9].text))
+        EloClay.append(float_or_zero(col[10].text))
+        EloGrass.append(float_or_zero(col[11].text))
 
 
     if surface=="clay":
@@ -81,7 +81,7 @@ def eloScrape(players,surface):
             conflicts.append(p_draw)
             conflicts_indices.append(i)
             print("Found more than one match for",p_draw)
-    
+
     # input for elos that were not found
     quartiles = quantiles(elos_found,n=4)
     # input elos for qualifiers at the first quartile
@@ -90,3 +90,9 @@ def eloScrape(players,surface):
             elos[i] = quartiles[0]
 
     return elos
+
+def float_or_zero(x):
+    try:
+        return float(x)
+    except:
+        return 0.0
