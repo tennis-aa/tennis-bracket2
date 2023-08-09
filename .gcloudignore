@@ -20,6 +20,3 @@ __pycache__/
 
 # virtual environment
 .venv/
-
-# temporary directory
-postgresql_to_firestore/
