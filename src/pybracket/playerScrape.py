@@ -6,7 +6,8 @@ from .ATP2bracket import exceptions
 
 # scrape players from ATP website
 def ATPdrawScrape(atplink):
-    page = requests.get(atplink)
+    headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0"}
+    page = requests.get(atplink,headers=headers)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
     draw = soup.find(id="scoresDrawTable").find("tbody")
     rows = draw.findChildren("tr",recursive=False)
@@ -22,7 +23,7 @@ def ATPdrawScrape(atplink):
             player_seed.append(player_info[1].text.strip())
 
     # Get the rankings
-    page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500")
+    page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500",headers=headers)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
     table = soup.find(id="player-rank-detail-ajax").find("tbody")
     rank_rows = table.findChildren("tr",recursive=False)
@@ -40,7 +41,7 @@ def ATPdrawScrape(atplink):
             player_entries.append("Bye")
             player_ranking.append(10000)
             continue
-        if player_names[i].startswith("Qualifier"):
+        if player_names[i].lower().startswith("qualifier"):
             qualifier_count += 1
             player_entries.append("Qualifier{}".format(qualifier_count))
             player_ranking.append(500)

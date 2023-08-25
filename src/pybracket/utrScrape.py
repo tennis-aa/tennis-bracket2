@@ -7,6 +7,9 @@ from .bracket2utr import exceptions
 def utrScrape(players):
     # There is an api so we do not need to scrape
     utr_data = requests.get("https://api.universaltennis.com/pts/player/top?gender=m&top=500&skip=0")
+    if utr_data.status_code != 200:
+        print("error fetching utr scores",utr_data.text)
+        return [0]*len(players)
     utr_data = json.loads(utr_data.text)
     Player = []
     UTR = []
