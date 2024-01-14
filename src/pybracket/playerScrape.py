@@ -9,28 +9,32 @@ def ATPdrawScrape(atplink):
     headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0"}
     page = requests.get(atplink,headers=headers)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
-    draw = soup.find(id="scoresDrawTable").find("tbody")
-    rows = draw.findChildren("tr",recursive=False)
+    draws = soup.find_all(class_="draw")
 
     # Get only the players and the seed
+    rows = draws[0].find_all(class_="stats-item")
     player_names = []
     player_seed = []
     for i,row in enumerate(rows):
-        match = row.find("td")
-        for j,player in enumerate(match.find_all("tr")):
-            player_info = player.find_all("td")
-            player_names.append(player_info[2].text.strip())
-            player_seed.append(player_info[1].text.strip())
+        player_info = row.find(class_="name")
+        player_names.append(player_info.contents[0].text.strip())
+        player_seed.append(player_info.contents[2].text.strip())
 
     # Get the rankings
     page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500",headers=headers)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
-    table = soup.find(id="player-rank-detail-ajax").find("tbody")
-    rank_rows = table.findChildren("tr",recursive=False)
+    table = soup.find(class_="mega-table desktop-table").find("tbody")
+    rank_rows = table.find_all("tr",recursive=False)
     rank = {}
     for row in rank_rows:
-        rank[row.find(class_="player-cell").text.strip()] = int(row.find(class_="rank-cell").text.strip())
-    
+        cols = row.find_all("td",limit=2)
+        try:
+            # only saving the last name may lead to duplicates (players with the same last name)
+            # that silently overwrite each other
+            rank[cols[1].find(class_="name").text.split()[-1]] = int(cols[0].text.strip())
+        except:
+            continue
+
     # player_entries are the combination of player names and seeds, with names only displaying the first letter of the first name
     # Players with more than one first name are displayed with the first letter of each first name by looking for those exceptions in ATP2bracket.py
     player_entries = []
@@ -46,56 +50,69 @@ def ATPdrawScrape(atplink):
             player_entries.append("Qualifier{}".format(qualifier_count))
             player_ranking.append(500)
             continue
-
         try:
             player_entry = (exceptions[player_names[i]] + " " + player_seed[i]).strip()
         except:
             player_name_list = player_names[i].split()
             player_entry = " ".join([player_name_list[0][0]] + player_name_list[1:] + [player_seed[i]]).strip()
         player_entries.append(player_entry)
-
         # ranking
         try:
-            player_ranking.append(rank[player_names[i]])
+            player_ranking.append(rank[player_names[i].split()[-1]])
         except:
+            print("Did not find ranking for player " + player_names[i])
             player_ranking.append(1000)
 
     rounds = int(math.log2(len(player_entries)))
-    result_entries = [[] for _ in range(rounds)]
-    score_entries = [[] for _ in range(rounds)]
-    for i,row in enumerate(rows):
-        for rd,col in enumerate(row.findChildren("td",recursive=False)):
-            if rd == 0:
-                continue
-            x = col.find_all(class_="scores-draw-entry-box")
-            for box in col.find_all(class_="scores-draw-entry-box"):
-                player_links = box.find_all(class_="scores-draw-entry-box-players-item")
-                score_links = box.find_all(class_="scores-draw-entry-box-score")
-                if len(player_links) == 0:
-                    result_entries[rd-1].append("")
-                    score_entries[rd-1].append("")
-                else:
-                    for j in range(len(player_links)):
-                        player_name = player_links[j].text
-                        player_name = player_name.strip()
-                        ind = player_names.index(player_name)
-                        result_entries[rd-1].append(player_entries[ind])
-                        score_contents = score_links[j].contents
-                        score_raw = ""
-                        for i in range(len(score_contents)):
-                            if score_contents[i].name == "sup":
-                                score_raw += "(" + score_contents[i].text + ")"
-                            else:
-                                score_raw += str(score_contents[i])
-                        score_entries[rd-1].append(" ".join(score_raw.split()))
-
+    if rounds != len(draws):
+        raise "There is a mismatch in the number of rounds"
     results = []
+    for i,draw in enumerate(draws):
+        if (i == 0): continue
+        rows = draw.find_all(class_="stats-item")
+        for i,row in enumerate(rows):
+            player_info = row.find(class_="name")
+            player_name = player_info.contents[0].text.strip()
+            try:
+                ind = player_names.index(player_name)
+                results.append(player_entries[ind])
+            except:
+                results.append("")
+
     scores = []
-    for i in range(len(result_entries)):
-        results = results + result_entries[i]
-        scores = scores + score_entries[i]
+    for draw in draws:
+        rows = draw.find_all(class_="draw-item")
+        for row in rows:
+            player_infos = row.find_all(class_="stats-item")
+            if len(player_infos[0].find_all(class_="winner")) > 0:
+                winner = player_infos[0]
+                loser = player_infos[1]
+            elif len(player_infos[1].find_all(class_="winner")) > 0:
+                winner = player_infos[1]
+                loser = player_infos[0]
+            else:
+                scores.append("")
+                continue
+            try:
+                first_score = winner.find(class_="score-item").text.strip()
+                if first_score == "" or first_score == "-":
+                    raise
+            except:
+                scores.append("")
+                continue
+            winner_score = winner.find_all(class_="score-item")
+            loser_score = loser.find_all(class_="score-item")
+            score = ""
+            for j in range(len(winner_score)):
+                winner_spans = winner_score[j].find_all("span")
+                loser_spans = loser_score[j].find_all("span")
+                score += winner_spans[0].text
+                score += loser_spans[0].text
+                if winner_spans[1].text != "":
+                    score += "(" + winner_spans[1].text + ")"
+                elif loser_spans[1].text != "":
+                    score += "(" + loser_spans[1].text + ")"
+                score += " "
+            scores.append(score.strip())
 
     return {"players":player_entries,"ranking":player_ranking,"results":results,"scores":scores}
-
-
-
