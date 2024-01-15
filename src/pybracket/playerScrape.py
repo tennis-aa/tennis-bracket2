@@ -63,34 +63,24 @@ def ATPdrawScrape(atplink):
             print("Did not find ranking for player " + player_names[i])
             player_ranking.append(1000)
 
-    rounds = int(math.log2(len(player_entries)))
-    if rounds != len(draws):
-        raise "There is a mismatch in the number of rounds"
     results = []
-    for i,draw in enumerate(draws):
-        if (i == 0): continue
-        rows = draw.find_all(class_="stats-item")
-        for i,row in enumerate(rows):
-            player_info = row.find(class_="name")
-            player_name = player_info.contents[0].text.strip()
-            try:
-                ind = player_names.index(player_name)
-                results.append(player_entries[ind])
-            except:
-                results.append("")
-
     scores = []
     for draw in draws:
         rows = draw.find_all(class_="draw-item")
         for row in rows:
             player_infos = row.find_all(class_="stats-item")
-            if len(player_infos[0].find_all(class_="winner")) > 0:
+            if player_infos[0].find(class_="winner") is not None:
+                player_name = player_infos[0].find(class_="name").contents[0].text.strip()
+                results.append(player_entries[player_names.index(player_name)])
                 winner = player_infos[0]
                 loser = player_infos[1]
-            elif len(player_infos[1].find_all(class_="winner")) > 0:
+            elif player_infos[1].find(class_="winner") is not None:
+                player_name = player_infos[1].find(class_="name").contents[0].text.strip()
+                results.append(player_entries[player_names.index(player_name)])
                 winner = player_infos[1]
                 loser = player_infos[0]
             else:
+                results.append("")
                 scores.append("")
                 continue
             try:

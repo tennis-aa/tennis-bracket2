@@ -28,5 +28,7 @@ exceptions = {
     "T van Rijthoven":"Tim Van Rijthoven",
     "Y Wu":"Yibing Wu",
     "L van Assche": "Luca Van Assche",
-    "L Van Assche": "Luca Van Assche"
+    "L Van Assche": "Luca Van Assche",
+    "J De Jong": "Jesper De Jong",
+    "J McCabe": "James Mccabe"
 }
