@@ -13,8 +13,8 @@
     {% for message in get_flashed_messages() %}
       <div class="flash">{{ message }}</div>
     {% endfor %}
-    <h2> Torneo nuevo </h2>
-    <form method="post">
+    <h2> Torneo nuevo (manual)</h2>
+    <form id="player-form" method="post">
       <label for="name"> Nombre del torneo: </label>
       <input type="text" name="name" id="name">
       <label for="year"> Año: </label>
@@ -24,8 +24,6 @@
         <option value=3 selected="selected"> 3 </option>
         <option value=5> 5 </option>
       </select>
-      <label for="atplink"> Enlace a la pagina de la ATP: </label>
-      <input type="text" name="atplink" id="atplink">
       <label for="surface"> Superficie: </label>
       <select name="surface" id="surface">
         <option value="all"> N/A </option>
@@ -40,11 +38,27 @@
       <label for="timezone"> Zona horaria UTC </label>
       <input type="number" name="timezone" id="timezone" value="-5">
       <br>
+
+      <label for="bracket-size">Numero de jugadores</label>
+      <select name="bracket-size" id="bracket-size" onchange="update_bracketsize()">
+        <option>16</option>
+        <option selected="selected">32</option>
+        <option>64</option>
+        <option>128</option>
+      </select>
+      <p>El formato del nombre es la primera inicial seguida por el apellido, por ejemplo "R Federer".</p>
+      <table id="player-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Elo</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
       <input type="submit" value="Crear">
     </form>
-    <div>
-      Si no existe un enlace a la pagina de la ATP, use <a href="{{ url_for('update.newtournament_manual') }}"> este enlace </a> para crear el cuadro manualmente.
-    </div>
-  </div>
+    <script src="{{ url_for('static', filename='js/newtournament_manual.js') }}"></script>
 </body>
 </html>

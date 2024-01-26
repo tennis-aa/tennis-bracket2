@@ -287,7 +287,7 @@ class Bracket:
             points = []
             for user in table_results["user"]:
                 points.append(self.computePoints(self.brackets[user]))
-            maxpoints = max(points)
+            maxpoints = max(points, default=0)
 
             # who would have won?
             winners = []

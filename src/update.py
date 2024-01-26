@@ -6,6 +6,7 @@ from datetime import datetime,timezone,timedelta
 from . import pybracket
 from . import dbfirestore
 from . import auth
+from .tournaments import bracketRender
 
 bp = Blueprint('update', __name__,url_prefix='/update')
 
@@ -54,11 +55,13 @@ def tournament(year,tournament):
         b.elo = [float(request.form['elo'+str(i)]) for i in range(len(b.players))]
         b.utr = [float(request.form['utr'+str(i)]) for i in range(len(b.players))]
 
-        try:
-            updated_players = b.updatePlayers()
-        except:
-            flash("Error actualizando jugadores")
-            return redirect(url_for('update.tournament',year=year,tournament=tournament))
+        updated_players = False
+        if b.atplink != "":
+            try:
+                updated_players = b.updatePlayers()
+            except:
+                flash("Error actualizando jugadores")
+                return redirect(url_for('update.tournament',year=year,tournament=tournament))
 
         # try:
         if updated_players:
@@ -70,7 +73,7 @@ def tournament(year,tournament):
             dbfirestore.update_bracket(elobrack[0].to_dict()["bracket_id"],{"bracket" : b.brackets[5]})
         else:
             dbfirestore.add_bracket(5,tourn["tournament_id"],b.brackets[5])
-        b.updateResults(scrape=True)
+        b.updateResults(scrape = b.atplink!="")
         bracket2tourn(b,tourn)
         dbfirestore.update_tournament(tourn)
         flash('Cuadro actualizado exitosamente.')
@@ -80,7 +83,41 @@ def tournament(year,tournament):
 
     if len(b.utr) == 0:
         b.utr = [0]*b.bracketSize
-    return render_template('update/tournament.jinja', b=b, start_time = start_time, end_time = end_time, tz = tz)
+    return render_template('update/tournament.jinja', b=b, start_time = start_time, end_time = end_time, tz = tz, tournament = tournament, year = year)
+
+@bp.route('/<year>/<tournament>/manual',methods=('GET','POST'))
+@auth.login_required
+def tournament_manual(year,tournament):
+    if g.user["user_id"] > 4:
+        return redirect(url_for('index'))
+    tourn = dbfirestore.get_tournament(tournament,year)
+    if tourn is None:
+        flash('could not find tournament')
+        return redirect(url_for('index'))
+
+    brack = dbfirestore.db.collection("brackets").where("tournament_id","==",tourn["tournament_id"]).stream()
+
+    b = db2bracket(tourn, brack)
+
+    if request.method == 'POST':
+        for i in range(tourn["bracketsize"]-1):
+            try:
+                b.results[i] = int(request.form['select{}'.format(tourn["bracketsize"]+i)])
+            except:
+                b.results[i] = -1
+        b.updateResults(scrape=False)
+        bracket2tourn(b,tourn)
+        dbfirestore.update_tournament(tourn)
+        flash('Cuadro actualizado exitosamente.')
+        return redirect(url_for('update.tournament',year=year,tournament=tournament))
+
+    if len(b.utr) == 0:
+        b.utr = [0]*b.bracketSize
+    render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],
+            'elos':tourn["elos"],'bracket':b.results, 'time_to_start':timedelta(minutes=5)}
+
+    return bracketRender('submit',year,tournament,render_vars)
+
 
 @bp.route('/newtournament',methods=('GET','POST'))
 @auth.login_required
@@ -110,6 +147,34 @@ def newtournament():
         #     return render_template("update/newtournament.jinja")
 
     return render_template("update/newtournament.jinja")
+
+@bp.route('/newtournament/manual',methods=('GET','POST'))
+@auth.login_required
+def newtournament_manual():
+    if g.user["user_id"] > 4:
+        return redirect(url_for('index'))
+    
+    if request.method == "POST":
+        bracketsize = int(request.form["bracket-size"])
+        players = [request.form['player'+str(i)] for i in range(bracketsize)]
+        elos = [float(request.form['elo'+str(i)]) for i in range(bracketsize)]
+
+        utrs = [14]*bracketsize
+        rankings = [50]*bracketsize
+        start_time = datetime.strptime(request.form['starttime'],'%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(request.form['endtime'],'%Y-%m-%dT%H:%M')
+        tz = timezone(timedelta(hours=int(request.form["timezone"])))
+        start_time = start_time.replace(tzinfo=tz)
+        end_time = end_time.replace(tzinfo=tz)
+        atplink = ""
+        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}}
+        dbfirestore.add_tournament(request.form['name'],int(request.form['year']),start_time,end_time,[1,2,3,5,7,10,15],
+            atplink,bracketsize,request.form['surface'],int(request.form['sets']),
+            players,elos,utrs,rankings,results_dict)
+        return redirect(url_for('update.tournament',year = request.form['year'],tournament=request.form['name']))
+
+    return render_template("update/newtournament_manual.jinja")
+
 
 @bp.route('/newuser',methods=('GET','POST'))
 @auth.login_required
