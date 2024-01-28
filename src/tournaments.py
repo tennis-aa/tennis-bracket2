@@ -9,16 +9,37 @@ from . import auth
 bp = Blueprint('tournaments', __name__)
 
 @bp.route('/')
+@auth.login_required
 def index():
+    user_entries = dbfirestore.db.collection("users").stream()
+    users = {}
+    for user_entry in user_entries:
+        if user_entry.id == "usercount": continue
+        user = user_entry.to_dict()
+        users[user["user_id"]] = user["username"]
+
     tournament_docs = dbfirestore.db.collection("tournaments").stream()
     tournaments = [i.to_dict() for i in tournament_docs if i.id != "tournamentcount"]
     tournaments.sort(key = lambda x: x["start_time"],reverse=True)
     year_tournament_dict = {}
     for i in tournaments:
+        tournament_info = {"name": i["name"]}
+        table_results = i["results"]["table_results"]
+        leaders = ""
+        for j,position in enumerate(table_results["position"]):
+            if position != 1:
+                break
+            if j != 0:
+                leaders += "/"
+            leaders += users[table_results["user"][j]]
+        tournament_info["leader"] = leaders
+        myindex = table_results["user"].index(g.user["user_id"])
+        myposition = table_results["position"][myindex]
+        tournament_info["myposition"] = myposition
         if i["year"] in year_tournament_dict:
-            year_tournament_dict[i["year"]].append(i["name"])
+            year_tournament_dict[i["year"]].append(tournament_info)
         else:
-            year_tournament_dict[i["year"]] = [i["name"]]
+            year_tournament_dict[i["year"]] = [tournament_info]
     return render_template('index.jinja',year_tournament_dict=year_tournament_dict)
 
 @bp.route('/<year>/<tournament>')
@@ -128,7 +149,20 @@ def table(year,tournament):
         "year": year, "tournament": tournament, "seconds_to_start": time_to_start.total_seconds()}
     return render_template("tournaments/TablePositions.jinja",**render_vars)
 
+@bp.route('/<year>/<tournament>/<id>/bracket')
+@auth.login_required
+def bracket_json(year,tournament,id):
+    tourn = dbfirestore.get_tournament(tournament,year)
+    if tourn is None:
+        return []
 
+    brack = dbfirestore.db.collection("brackets").where("tournament_id","==",tourn["tournament_id"]).where("user_id","==",int(id)).get()
+    if len(brack) == 1:
+        brack = brack[0].to_dict()
+        bracket = brack["bracket"]
+        return bracket
+    else:
+        return []
 
 import math
 def bracketRender(render_type,year,tournament,render_vars):

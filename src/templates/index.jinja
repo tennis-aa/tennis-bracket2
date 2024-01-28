@@ -16,12 +16,23 @@
 
     {% for year in year_tournament_dict %}
     <div class="container-year">
-      <div class="tournament-name"> {{ year }} </div>
-        {% for tournament in year_tournament_dict[year] %}
-        <a href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}">
-          <div class="tournament-link"> {{ tournament }} </div>
-        </a>
-        {% endfor %}
+      <div class="tournament-year"> {{ year }} </div>
+      <table class="tournament-table">
+        <thead><tr>
+          <th>{% if g.user.language == "spanish" %} Torneo {% else %} Tournament {% endif %}</th>
+          <th>{% if g.user.language == "spanish" %} Lider/Campeon {% else %} Leader/Champion {% endif %}</th>
+          <th>{% if g.user.language == "spanish" %} Mi posicion {% else %} My position {% endif %}</th>
+        </tr></thead>
+        <tbody>
+          {% for tournament in year_tournament_dict[year] %}
+          <tr onclick="document.location = '{{ url_for('tournaments.bracket',year=year,tournament=tournament['name']) }}'">
+            <td> {{ tournament["name"] }} </td>
+            <td> {{ tournament["leader"] }} </td>
+            <td> {{ tournament["myposition"] }} </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     {% endfor %}
   </div>
