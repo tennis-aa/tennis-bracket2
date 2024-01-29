@@ -116,7 +116,7 @@ def tournament_manual(year,tournament):
     render_vars = {'bracketSize':tourn["bracketsize"],'players':tourn["players"],
             'elos':tourn["elos"],'bracket':b.results, 'time_to_start':timedelta(minutes=5)}
 
-    return bracketRender('submit',year,tournament,render_vars)
+    return bracketRender('update/tournament_manual.jinja',render_vars)
 
 
 @bp.route('/newtournament',methods=('GET','POST'))

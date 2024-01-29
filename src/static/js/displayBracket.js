@@ -1,7 +1,7 @@
 // the following variables are loaded from the server through the template
 // let players;
-// let brackets;
 // let bracketSize;
+// let brackets;
 // let results_dict;
 let results;
 let scores;

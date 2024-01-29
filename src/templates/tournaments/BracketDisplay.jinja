@@ -1,30 +1,4 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title> {{ tournament }} {{ year }} </title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bracket.css') }}">
-</head>
-<body onLoad="loadDisplay()">
-{% include 'header.jinja' %}
-<nav class="navbar navbar-expand-sm tournament">
-  <div class="tournament-name"> {{ tournament }} {{ year}} </div>
-  <div class = "navbar-nav">
-    <div class="nav-item active"><a class="nav-link tournament active" href="{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}">
-      {% if g.user.language == "spanish" %} Cuadros {% else %} Brackets {% endif %}
-    </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.table',year=year,tournament=tournament) }}">
-      {% if g.user.language == "spanish" %} Tabla de posiciones {% else %} Standings {% endif %}
-    </a></div>
-    <div class="nav-item"><a class="nav-link tournament" href="{{ url_for('tournaments.submit',year=year,tournament=tournament) }}">
-      {% if g.user.language == "spanish" %} Crear cuadro {% else %} Fill out bracket {% endif %}
-    </a></div>
-  </div>
-</nav>
-<div class="container-bracket">
+<div class="container-bracket tabcontent" id="display-bracket">
   <div style="position:relative; height: calc({{ bracketSize/2 }}*var(--vspace)); width: calc({{ rounds*2 + 1 }}*var(--hspace));">
   {% for j in range(rounds) %}
     {% for i in range((bracketSize/(2**j)) | int) %}
@@ -66,15 +40,3 @@
     </div>
   </div>
 </div>
-
-<script type=application/javascript>
-  let bracketSize = {{ bracketSize }};
-  let players = {{ players }};
-  let brackets = {{ brackets }};
-  let results_dict = {{ results_dict }};
-</script>
-<script type=application/javascript src="{{ url_for('static', filename='js/displayBracket.js') }}"></script>
-</body>
-</html>
-
-

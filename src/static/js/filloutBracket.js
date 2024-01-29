@@ -1,15 +1,15 @@
 // These variables are defined in the template
+// let players;
 // let bracketSize;
 // let rounds;
 // let counter;
-// let players;
 // let elo;
 // let bracket;
 function loadFillout() {
 
   // Put players in the bracket
   for (let i = 0; i < players.length; i++) {
-    let id = "p" + i;
+    let id = "pp" + i;
     document.getElementById(id).textContent = players[i];
   }
 

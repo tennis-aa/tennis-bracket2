@@ -49,25 +49,28 @@ body {
   padding-right: 1rem;
 }
 
-.nav-link.tournament {
+.nav-item.tournament {
   color: var(--color1);
+  padding: 0.5rem;
+  cursor: pointer;
 }
 
-.nav-link.tournament.active {
+.nav-item.tournament.active {
   color: white;
-}
-
-.nav-link.tournament:hover {
-  color: var(--color3);
-}
-
-.nav-item.active {
   background-color: var(--color1);
   border-radius: 0 0 5px 5px;
 }
 
-.nav-link.tournament.active:hover {
-  color: white;
+.nav-item.tournament:hover:not(.active) {
+  color: var(--color3);
+}
+
+.tabcontent {
+  display: none;
+}
+
+.tabcontent.active {
+  display: block;
 }
 
 /* index */

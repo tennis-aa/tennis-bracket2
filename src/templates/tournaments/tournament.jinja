@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> {{ tournament }} {{ year }} </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bracket.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/table.css') }}">
+</head>
+<body>
+{% include 'header.jinja' %}
+<nav class="navbar navbar-expand-sm tournament">
+  <div class="tournament-name"> {{ tournament }} {{ year}} </div>
+  <div class = "navbar-nav" id="tournament-navbar">
+    <div class="nav-item tournament" onclick="open_tab(0)">
+      {% if g.user.language == "spanish" %} Cuadros {% else %} Brackets {% endif %}
+    </div>
+    <div class="nav-item tournament" onclick="open_tab(1)">
+      {% if g.user.language == "spanish" %} Tabla de posiciones {% else %} Standings {% endif %}
+    </div>
+    <div class="nav-item tournament" onclick="open_tab(2)">
+      {% if g.user.language == "spanish" %} Crear cuadro {% else %} Fill out bracket {% endif %}
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  {% include 'tournaments/BracketDisplay.jinja' %}
+  {% include 'tournaments/TablePositions.jinja' %}
+  {% include 'tournaments/BracketFillout.jinja' %}
+</div>
+
+<script type=application/javascript src="{{ url_for('static', filename='js/displayBracket.js') }}"></script>
+<script type="application/javascript" src="{{ url_for('static',filename='js/filloutBracket.js') }}"></script>
+<script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
+<script type=application/javascript>
+  let bracketSize = {{ bracketSize }};
+  let players = {{ players }};
+  let brackets = {{ brackets }};
+  let results_dict = {{ results_dict }};
+  let rounds = {{ rounds }};
+  let counter = {{ counter }};
+  let elo = {{ elos }};
+  let bracket = {{ bracket }};
+  loadDisplay();
+  loadFillout();
+  open_tab({{ active_tab }});
+</script>
+
+</body>
+</html>
