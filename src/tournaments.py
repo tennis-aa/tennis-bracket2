@@ -1,7 +1,7 @@
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, session, url_for
+    Blueprint, flash, g, redirect, render_template, request, url_for
 )
-from datetime import datetime,timezone,timedelta
+from datetime import datetime,timedelta
 
 from . import dbfirestore
 from . import auth
@@ -11,12 +11,7 @@ bp = Blueprint('tournaments', __name__)
 @bp.route('/')
 @auth.login_required
 def index():
-    user_entries = dbfirestore.db.collection("users").stream()
-    users = {}
-    for user_entry in user_entries:
-        if user_entry.id == "usercount": continue
-        user = user_entry.to_dict()
-        users[user["user_id"]] = user["username"]
+    users = dbfirestore.get_user_dict()
 
     tournament_docs = dbfirestore.db.collection("tournaments").stream()
     tournaments = [i.to_dict() for i in tournament_docs if i.id != "tournamentcount"]
@@ -53,12 +48,7 @@ def bracket(year,tournament):
         flash('could not find tournament')
         return redirect(url_for('index'))
 
-    user_entries = dbfirestore.db.collection("users").stream()
-    users = {}
-    for user_entry in user_entries:
-        if user_entry.id == "usercount": continue
-        user = user_entry.to_dict()
-        users[user["user_id"]] = user["username"]
+    users = dbfirestore.get_user_dict()
 
     tzlocal = datetime.utcnow().astimezone().tzinfo
     localtime = datetime.now(tzlocal)

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Cuadros </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='favicon.png') }}"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  {% include 'header.jinja' %}
+  <div class="container-fluid">
+
+    <h3>
+      {% if g.user.language == "spanish" %} Estadisticas del usuario {% else %} User statistics {% endif %}
+    </h3>
+    <table class="stats-table">
+      <thead><tr>
+        <th>{% if g.user.language == "spanish" %} Año {% else %} Year {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # participaciones {% else %} # entries {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # victorias {% else %} # victories {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # yunque {% else %} # last place {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} posicion media {% else %} median position {% endif %}</th>
+      </tr></thead>
+      <tbody>
+        {% for year in user_stats %}
+        <tr>
+          <td> {% if year == "overall" %} Total {% else %} {{ year }} {% endif%} </td>
+          <td> {{ user_stats[year]["n"] }} </td>
+          <td> {{ user_stats[year]["first"] }} </td>
+          <td> {{ user_stats[year]["last"] }} </td>
+          <td> {{ user_stats[year]["median_pos"] }} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <h3>
+    {% if g.user.language == "spanish" %} Estadisticas anuales {% else %} Yearly statistics {% endif %}
+    </h3>
+    {% for year in yearly_stats %}
+    <h4> {% if year == "overall" %} Total {% else %} {{ year }} {% endif %} </h4>
+    <table class="stats-table">
+      <thead><tr>
+        <th>{% if g.user.language == "spanish" %} Usuario {% else %} User {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # participaciones {% else %} # entries {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # victorias {% else %} # victories {% endif %}</th>
+        <th>{% if g.user.language == "spanish" %} # yunques {% else %} # last place {% endif %}</th>
+      </tr></thead>
+      <tbody>
+        {% for user in yearly_stats[year] %}
+        <tr>
+          <td> {{ users[user] }} </td>
+          <td> {{ yearly_stats[year][user]["n"] }} </td>
+          <td> {{ yearly_stats[year][user]["first"] }} </td>
+          <td> {{ yearly_stats[year][user]["last"] }} </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endfor %}
+  </div>
+</body>
+</html>

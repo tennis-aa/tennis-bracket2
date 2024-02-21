@@ -25,6 +25,9 @@
   <div class="navbar-nav">
     {% if g.user %}
     <div class="nav-item"><a class="nav-link header" href="{{ url_for('auth.profile') }}">{{ g.user['username'] }}</a></div>
+    <div class="nav-item"><a class="nav-link header" href="{{ url_for('stats.index') }}">
+      {% if g.user.language == "spanish" %} Estadisticas {% else %} Statistics {% endif %}
+    </a></div>
       {% if g.user.user_id <= 4 %}
     <div class="nav-item"><a class="nav-link header" href="{{ url_for('update.index') }}">
       {% if g.user.language == "spanish" %} Administrar {% else %} Admin {% endif %}

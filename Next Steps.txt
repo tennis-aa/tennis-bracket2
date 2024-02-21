@@ -1,4 +1,2 @@
-- interface to create a new tournament
-	- try catch potential mistakes in inputs
-- make website prettier
-	- Make tournaments a table showing the leader
+
+- remove elo from the players now that we show its performance in the bottom of the table

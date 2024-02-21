@@ -39,6 +39,15 @@ def update_user(id,username=None,password=None,language=None):
     else:
         return False
 
+def get_user_dict():
+    user_entries = db.collection("users").stream()
+    users = {}
+    for user_entry in user_entries:
+        if user_entry.id == "usercount": continue
+        user = user_entry.to_dict()
+        users[user["user_id"]] = user["username"]
+    return users
+
 def add_tournament(name,year,start_time,end_time,points_per_round,atplink,
         bracketsize,surface,sets,players,elos,utrs,rankings,results):
     coll = db.collection("tournaments")

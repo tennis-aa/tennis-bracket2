@@ -38,4 +38,8 @@ def create_app(test_config=None):
     from . import update
     app.register_blueprint(update.bp)
 
+    # page to see stats
+    from . import stats
+    app.register_blueprint(stats.bp)
+
     return app
