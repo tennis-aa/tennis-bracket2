@@ -14,7 +14,7 @@
     <h3>
       {% if g.user.language == "spanish" %} Estadisticas del usuario {% else %} User statistics {% endif %}
     </h3>
-    <table class="stats-table">
+    <table class="stats-table stats-user">
       <thead><tr>
         <th>{% if g.user.language == "spanish" %} Año {% else %} Year {% endif %}</th>
         <th>{% if g.user.language == "spanish" %} # participaciones {% else %} # entries {% endif %}</th>
@@ -40,7 +40,7 @@
     </h3>
     {% for year in yearly_stats %}
     <h4> {% if year == "overall" %} Total {% else %} {{ year }} {% endif %} </h4>
-    <table class="stats-table">
+    <table class="stats-table stats-year">
       <thead><tr>
         <th>{% if g.user.language == "spanish" %} Usuario {% else %} User {% endif %}</th>
         <th>{% if g.user.language == "spanish" %} # participaciones {% else %} # entries {% endif %}</th>
@@ -60,5 +60,14 @@
     </table>
     {% endfor %}
   </div>
+
+  <script src="{{ url_for('static', filename='js/tableSort.js') }}"></script>
+  <script>
+    makeAllSortable()
+    let yearly_stats = document.querySelectorAll(".stats-year")
+    for (let i=0; i<yearly_stats.length; ++i) {
+      sortTable(yearly_stats[i],2,1);
+    }
+  </script>
 </body>
 </html>
