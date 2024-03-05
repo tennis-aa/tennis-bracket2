@@ -17,8 +17,11 @@ def ATPdrawScrape(atplink):
     player_seed = []
     for i,row in enumerate(rows):
         player_info = row.find(class_="name")
-        player_names.append(player_info.contents[0].text.strip())
-        player_seed.append(player_info.contents[2].text.strip())
+        player_names.append(player_info.contents[0].string.strip())
+        try: # byes and qualifiers do not have a seed entry
+            player_seed.append(player_info.contents[2].string.strip())
+        except:
+            player_seed.append("")
 
     # Get the rankings
     page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500",headers=headers)
