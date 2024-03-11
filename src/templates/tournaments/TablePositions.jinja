@@ -15,7 +15,7 @@
     </thead>
     <tbody>
     {% for i in range(table_results['user']|length) %}
-      <tr onclick="document.location = '{{ url_for('tournaments.bracket',year=year,tournament=tournament) }}?user={{ table_results['user'][i] }}'">
+      <tr onclick="show_player_bracket('{{ table_results['user'][i] }}')">
         <td> {{ i+1 }} </td>
         <td> {{ table_results['user'][i] }}</td>
         <td> {{ table_results['points'][i] }} </td>

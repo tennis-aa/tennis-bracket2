@@ -18,3 +18,14 @@ function open_tab(n) {
     }
   }
 }
+
+let user_select = document.getElementById("user");
+function show_player_bracket(name) {
+  // https://stackoverflow.com/a/31982533/12510953 exclude selection
+  let selection = window.getSelection();
+  if(selection.type != "Range") { 
+    open_tab(0);
+    user_select.value = name;
+    display_bracket();
+  }
+}

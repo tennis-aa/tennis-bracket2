@@ -7,3 +7,7 @@
   background-color: var(--color1);
   color: white;
 }
+
+#table-positions tbody {
+  cursor: pointer;
+}
