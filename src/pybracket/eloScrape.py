@@ -51,7 +51,7 @@ def eloScrape(players,surface):
         if p_draw == "Bye":
             elos[i] = 0
             continue
-        elif p_draw.startswith("Qualifier"):
+        elif p_draw.startswith("Qualifier") or p_draw.startswith("Alternate"):
             elos[i] = 1
             continue
         matches = 0

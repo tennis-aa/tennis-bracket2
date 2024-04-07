@@ -24,7 +24,7 @@ def utrScrape(players):
         if p_draw == "Bye":
             utrs[i] = 0
             continue
-        elif p_draw.startswith("Qualifier"):
+        elif p_draw.startswith("Qualifier") or p_draw.startswith("Alternate"):
             utrs[i] = 1
             continue
         matches = 0

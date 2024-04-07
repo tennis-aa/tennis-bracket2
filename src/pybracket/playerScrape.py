@@ -26,7 +26,7 @@ def ATPdrawScrape(atplink):
     # Get the rankings
     page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500",headers=headers)
     soup = bs4.BeautifulSoup(page.text, "html.parser")
-    table = soup.find(class_="mega-table desktop-table").find("tbody")
+    table = soup.find("table").find("tbody")
     rank_rows = table.find_all("tr",recursive=False)
     rank = {}
     for row in rank_rows:
@@ -43,6 +43,7 @@ def ATPdrawScrape(atplink):
     player_entries = []
     player_ranking = []
     qualifier_count = 0
+    alternate_count = 0
     for i in range(len(player_names)):
         if player_names[i] == "Bye":
             player_entries.append("Bye")
@@ -51,6 +52,11 @@ def ATPdrawScrape(atplink):
         if player_names[i].lower().startswith("qualifier"):
             qualifier_count += 1
             player_entries.append("Qualifier{}".format(qualifier_count))
+            player_ranking.append(500)
+            continue
+        if player_names[i].lower().startswith("alternate"):
+            alternate_count += 1
+            player_entries.append("Alternate{}".format(alternate_count))
             player_ranking.append(500)
             continue
         try:
