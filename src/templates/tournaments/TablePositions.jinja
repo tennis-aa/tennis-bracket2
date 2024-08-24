@@ -37,6 +37,12 @@
   {% if "ranking_points" in table_results %}
   <div> {% if g.user.language == "spanish" %} Puntos usando el ranking ATP {% else %} Points using the ATP ranking {% endif %} {{ table_results["ranking_points"] }} </div>
   {% endif %}
+  {% if "max_points" in table_results %}
+  <div> {% if g.user.language == "spanish" %} Maxima cantidad de puntos {% else %} Maxmum points {% endif %} {{ table_results["max_points"] }} </div>
+  {% endif %}
+  {% if "max_potential" in table_results %}
+  <div> {% if g.user.language == "spanish" %} Maximo potencial {% else %} Maxmum potential of points {% endif %} {{ table_results["max_potential"] }} </div>
+  {% endif %}
 {% else %}
   {% if g.user.language == "spanish" %} La tabla de posiciones sera actualizada cuando el torneo haya iniciado. {% else %} The standings will be updated when the tournament starts. {% endif %}
 {% endif %}

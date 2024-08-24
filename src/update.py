@@ -137,7 +137,10 @@ def newtournament():
         start_time = start_time.replace(tzinfo=tz)
         end_time = end_time.replace(tzinfo=tz)
         bracketsize = len(atpinfo['players'])
-        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}}
+        results_dict = {'results':[-1]*(bracketsize-1),'scores':[""]*(bracketsize-1),'losers':[],
+            'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],
+                "monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,
+                "ranking_points":0,"max_points":0,"max_potential":0}}
         dbfirestore.add_tournament(request.form['name'],int(request.form['year']),start_time,end_time,[1,2,3,5,7,10,15],
             request.form['atplink'],bracketsize,request.form['surface'],int(request.form['sets']),
             atpinfo['players'],elos,utrs,rankings,results_dict)
@@ -167,7 +170,10 @@ def newtournament_manual():
         start_time = start_time.replace(tzinfo=tz)
         end_time = end_time.replace(tzinfo=tz)
         atplink = ""
-        results_dict = {'results':[-1]*bracketsize,'scores':[""]*bracketsize,'losers':[],'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}}
+        results_dict = {'results':[-1]*(bracketsize-1),'scores':[""]*(bracketsize-1),'losers':[],
+            'table_results':{"user": [],"points":[],"potential":[],"position":[],"rank":[],
+                "monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,
+                "ranking_points":0,"max_points":0,"max_potential":0}}
         dbfirestore.add_tournament(request.form['name'],int(request.form['year']),start_time,end_time,[1,2,3,5,7,10,15],
             atplink,bracketsize,request.form['surface'],int(request.form['sets']),
             players,elos,utrs,rankings,results_dict)

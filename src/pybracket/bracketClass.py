@@ -39,7 +39,7 @@ class Bracket:
             self.counter[j+1] = self.counter[j] + int(self.bracketSize/(2**j))
         self.start_time = start_time
         self.end_time = end_time
-    
+
     def loadFromFolder(self,path=None):
         if path is not None:
             self.path = path
@@ -128,6 +128,14 @@ class Bracket:
                 potential = potential-self.points_per_round[0]
 
         return potential
+
+    def computeMaxPotential(self):
+        bracket = [0] * (self.bracketSize-1)
+        results = self.results
+        self.results = [-1] * (self.bracketSize-1)
+        out = self.computePotential(bracket)
+        self.results = results
+        return out
 
     def updatePlayers(self):
         ATPData = playerScrape.ATPdrawScrape(self.atplink) # players, results, scores
@@ -223,7 +231,9 @@ class Bracket:
         self.losers = losers
 
         # Define the object that contains the standings
-        table_results = {"user": [],"points":[],"potential":[],"position":[],"rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,"utr_points":0,"ranking_points":0}
+        table_results = {"user": [],"points":[],"potential":[],"position":[],
+            "rank":[],"monkey_rank":[],"bot_rank":[],"prob_winning":[],"elo_points":0,
+            "utr_points":0,"ranking_points":0,"max_points":0,"max_potential":0}
         # compute points and positions for all participants
         entries = []
         for key in self.brackets:
@@ -311,6 +321,9 @@ class Bracket:
 
         if (len(self.ranking) != 0):
             table_results["ranking_points"] = self.computePoints(self.rankingBracket())
+
+        table_results["max_points"] = self.computePoints(self.results)
+        table_results["max_potential"] = self.computeMaxPotential()
 
         self.table_results = table_results
         return
