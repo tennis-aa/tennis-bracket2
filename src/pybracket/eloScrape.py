@@ -27,9 +27,9 @@ def eloScrape(players,surface):
         Player.append(col[1].text.replace("\xa0"," "))
         Age.append(float_or_zero(col[2].text))
         Elo.append(float_or_zero(col[3].text))
-        EloHard.append(float_or_zero(col[9].text))
-        EloClay.append(float_or_zero(col[10].text))
-        EloGrass.append(float_or_zero(col[11].text))
+        EloHard.append(float_or_zero(col[6].text))
+        EloClay.append(float_or_zero(col[8].text))
+        EloGrass.append(float_or_zero(col[10].text))
 
 
     if surface=="clay":

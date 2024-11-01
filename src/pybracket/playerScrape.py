@@ -1,14 +1,20 @@
-import os
 import bs4
-import math
 import requests
+import urllib
 from .ATP2bracket import exceptions
+
+def requestPage(url):
+    req = urllib.request.Request(url)
+    req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:106.0) Gecko/20100101 Firefox/106.0')
+    req.add_header('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8')
+    req.add_header('Accept-Language', 'en-US,en;q=0.5')
+    page = urllib.request.urlopen(req).read().decode('utf-8')
+    soup = bs4.BeautifulSoup(page, "html.parser")
+    return soup
 
 # scrape players from ATP website
 def ATPdrawScrape(atplink):
-    headers = {"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0"}
-    page = requests.get(atplink,headers=headers)
-    soup = bs4.BeautifulSoup(page.text, "html.parser")
+    soup = requestPage(atplink)
     draws = soup.find_all(class_="draw")
 
     # Get only the players and the seed
@@ -24,8 +30,7 @@ def ATPdrawScrape(atplink):
             player_seed.append("")
 
     # Get the rankings
-    page = requests.get("https://www.atptour.com/en/rankings/singles?rankRange=1-500",headers=headers)
-    soup = bs4.BeautifulSoup(page.text, "html.parser")
+    soup = requestPage("https://www.atptour.com/en/rankings/singles?rankRange=1-500")
     table = soup.find("table").find("tbody")
     rank_rows = table.find_all("tr",recursive=False)
     rank = {}
