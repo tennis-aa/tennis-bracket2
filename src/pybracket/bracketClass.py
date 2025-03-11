@@ -123,19 +123,24 @@ class Bracket:
             elif self.results[i]==-1 and not (bracket[i] in self.losers):
                 potential = potential + self.points_per_round[rd]
             
-        for i in range(len(self.players)):
-            if self.players[i] == "Bye":
-                potential = potential-self.points_per_round[0]
+        for p in self.players:
+            if p == "Bye":
+                potential -= self.points_per_round[0]
 
         return potential
 
     def computeMaxPotential(self):
-        bracket = [0] * (self.bracketSize-1)
-        results = self.results
-        self.results = [-1] * (self.bracketSize-1)
-        out = self.computePotential(bracket)
-        self.results = results
-        return out
+        potential = 0
+        matches = self.bracketSize/2
+        for r in range(self.rounds):
+            potential += matches * self.points_per_round[r]
+            matches /= 2
+
+        for p in self.players:
+            if p == "Bye":
+                potential -= self.points_per_round[0]
+
+        return int(potential)
 
     def updatePlayers(self):
         ATPData = playerScrape.ATPdrawScrape(self.atplink) # players, results, scores
