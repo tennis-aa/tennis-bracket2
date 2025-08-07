@@ -1,7 +1,7 @@
 # Added ignorefiles to template
 .vscode
 .venv
-password.py
+db/backup
 
 # Python
 # Byte-compiled / optimized / DLL files
