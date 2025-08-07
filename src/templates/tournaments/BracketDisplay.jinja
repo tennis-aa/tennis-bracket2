@@ -6,7 +6,7 @@
         {%- if i%2 == 0 and j<rounds-1 %}{# draw the lines between players in a match #}
     <div class="line" style="position: absolute; left: calc({{ j+1 }}*var(--hspace)); top: calc({{ i*2**j + (2**(j-1) - 1/2) }}*var(--vspace) + var(--cellheight) - var(--linewidth)); height: calc(var(--vspace)*{{2**j}} + var(--linewidth))"> </div>
         {% endif %}
-    <div class="player" id="p{{ counter[j] + i }}" style="position: absolute; left: calc({{ j }}*var(--hspace)); top: calc({{ i*(2**j) + (2**(j-1)-1/2) }} * var(--vspace)"> </div>
+    <div class="player" id="p{{ counter[j] + i }}" style="position: absolute; left: calc({{ j }}*var(--hspace)); top: calc({{ i*(2**j) + (2**(j-1)-1/2) }} * var(--vspace))"> </div>
         {% if j>0 %}
     <div class="score" id="score{{ counter[j] + i }}" style="position: absolute; left: calc({{ j }}*var(--hspace)); top: calc({{ i*(2**j) + (2**(j-1) - 1/2) }}*var(--vspace) + var(--cellheight))"> </div>
         {% endif%}

@@ -10,6 +10,7 @@ The app is written in python with the flask framework using the google firestore
 `python main.py`
 
 > Additional setup steps for the database are required.
+> With gcloud, I can use the following command to allow default access to the firestore database: `gcloud auth application-default login`
 
 ## Deployment to Google Cloud App Engine
 
