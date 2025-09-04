@@ -20,3 +20,6 @@ __pycache__/
 
 # virtual environment
 .venv/
+
+# database backup
+db/
